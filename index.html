@@ -1,0 +1,706 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>May the Force be with You</title>
+    <link href="https://fonts.googleapis.com/css2?family=Bai+Jamjuree:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Bai Jamjuree', sans-serif;
+            text-align: center;
+            background-color: #f3ecd9;
+            margin: 0;
+            min-height: 100vh;
+            position: relative;
+        }
+        .start-page {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            min-height: 100vh;
+            padding-top: 2rem;
+        }
+        .start-page h1 {
+            font-size: 1.8rem;
+            color: #e68434;
+            margin-bottom: 1.5rem;
+        }
+        .start-page .score {
+            font-size: 1rem;
+            background-color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            margin-bottom: 2rem;
+            display: inline-block;
+        }
+        .start-button {
+            width: 360px;
+            height: 360px;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+        .start-button:hover {
+            transform: scale(1.1);
+        }
+        .game-content {
+            display: none;
+            max-width: 90%;
+            margin: 0 auto;
+            padding: 1rem;
+            position: relative;
+            text-align: center;
+        }
+        .end-button {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            width: 50px;
+            height: 50px;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+            z-index: 3;
+        }
+        .end-button:hover {
+            transform: scale(1.1);
+        }
+        .row {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-bottom: 1rem;
+        }
+        .cup-container {
+            position: relative;
+            width: 144px;
+            height: 144px;
+            margin: 0.5rem;
+        }
+        .cup {
+            width: 144px;
+            height: 144px;
+            background: transparent;
+            background-image: url('https://i.postimg.cc/9QhhfXqQ/original-cup.png');
+            background-size: cover;
+            color: transparent;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 0;
+            text-align: center;
+            transition: opacity 0.5s ease;
+            position: relative;
+            z-index: 2;
+        }
+        .cup:hover:not(.selected):not(.disappear), .cup.hovered:not(.selected):not(.disappear) {
+            background-image: url('https://i.postimg.cc/NfTtY2Fn/toggled-cup.png');
+        }
+        .cup.selected {
+            opacity: 0;
+            pointer-events: none;
+        }
+        .cup.disappear {
+            opacity: 0;
+            pointer-events: none;
+        }
+        .reveal-image {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 40px;
+            height: 40px;
+            transform: translate(-50%, -50%);
+            display: none;
+            z-index: 1;
+        }
+        .cup.selected + .reveal-image,
+        .cup.disappear + .reveal-image {
+            display: block;
+        }
+        .section-label {
+            font-size: 0.9rem;
+            color: #333;
+            margin-top: 0.5rem;
+            text-align: center;
+        }
+        .score-wrapper, .question-wrapper {
+            display: block;
+            text-align: center;
+        }
+        .score {
+            font-size: 1rem;
+            margin-bottom: 0.5rem;
+            background-color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            display: inline-block;
+            min-width: 100px;
+        }
+        .question {
+            font-size: 1rem;
+            margin-bottom: 1rem;
+            background-color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            display: inline-block;
+            min-width: 200px;
+        }
+        .feedback {
+            font-size: 0.9rem;
+            margin-top: 1rem;
+        }
+        .correct {
+            color: green;
+        }
+        .incorrect {
+            color: red;
+        }
+        .logo {
+            position: absolute;
+            bottom: 1rem;
+            left: 1rem;
+            width: 80px;
+            cursor: pointer;
+        }
+        h1 {
+            font-size: 1.2rem;
+            text-align: center;
+            margin: 0.5rem 0;
+            color: #e68434;
+        }
+        .name-tag-container {
+            position: relative;
+            margin: 1rem auto;
+        }
+        .name-tag-container.tag1 {
+            width: 300px;
+            height: 60px;
+        }
+        .name-tag-container.tag2 {
+            width: 375px;
+            height: 60px;
+        }
+        .name-tag {
+            width: 100%;
+            height: 100%;
+            display: block;
+        }
+        .name-tag-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: black;
+            font-size: 1rem;
+            font-weight: bold;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+            text-align: center;
+            width: 100%;
+        }
+        .spacer-row {
+            height: 1rem;
+        }
+        #instruction-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 20;
+            justify-content: center;
+            align-items: center;
+        }
+        #instruction-modal .modal-content {
+            background-color: #c93c13;
+            color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            max-width: 80%;
+            text-align: center;
+            font-size: 1em;
+            line-height: 1.5;
+        }
+        #instruction-modal .modal-content p {
+            margin: 10px 0;
+        }
+        #continue-button {
+            margin-top: 15px;
+            padding: 10px 20px;
+            background-color: #f3ecdc;
+            color: #c93c13;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: bold;
+        }
+        #continue-button:hover {
+            background-color: #e0d9c8;
+        }
+        /* Media queries for mobile devices */
+        @media (max-width: 600px) {
+            .start-page h1 {
+                font-size: 1.5rem;
+            }
+            .start-page .score {
+                font-size: 0.9rem;
+                padding: 0.4rem 0.8rem;
+            }
+            .start-button {
+                width: 300px;
+                height: 300px;
+            }
+            .end-button {
+                width: 40px;
+                height: 40px;
+            }
+            .game-content {
+                padding: 0.5rem;
+            }
+            .cup-container {
+                width: 54px;
+                height: 54px;
+                margin: 0.2rem;
+            }
+            .cup {
+                width: 54px;
+                height: 54px;
+                font-size: 0;
+            }
+            .reveal-image {
+                width: 35px;
+                height: 35px;
+            }
+            .section-label {
+                font-size: 0.7rem;
+            }
+            .score {
+                font-size: 0.9rem;
+                padding: 0.4rem 0.8rem;
+                min-width: 80px;
+            }
+            .question {
+                font-size: 0.9rem;
+                padding: 0.4rem 0.8rem;
+                min-width: 150px;
+            }
+            .feedback {
+                font-size: 0.8rem;
+            }
+            .logo {
+                width: 60px;
+            }
+            h1 {
+                font-size: 1rem;
+            }
+            .name-tag-container.tag1 {
+                width: 240px;
+                height: 48px;
+            }
+            .name-tag-container.tag2 {
+                width: 300px;
+                height: 48px;
+            }
+            .name-tag-text {
+                font-size: 0.8rem;
+            }
+            .spacer-row {
+                height: 0.8rem;
+            }
+        }
+        @media (max-width: 360px) {
+            #instruction-modal .modal-content {
+                max-width: 90%;
+                padding: 15px;
+                font-size: 0.9em;
+            }
+            .cup-container {
+                width: 42px;
+                height: 42px;
+                margin: 0.1rem;
+            }
+            .cup {
+                width: 42px;
+                height: 42px;
+            }
+            .reveal-image {
+                width: 35px;
+                height: 35px;
+            }
+            .section-label {
+                font-size: 0.6rem;
+            }
+            .name-tag-container.tag1 {
+                width: 180px;
+                height: 36px;
+            }
+            .name-tag-container.tag2 {
+                width: 225px;
+                height: 36px;
+            }
+            .name-tag-text {
+                font-size: 0.7rem;
+            }
+            #continue-button {
+                padding: 8px 15px;
+                font-size: 0.9em;
+            }
+            .spacer-row {
+                height: 0.6rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="instruction-modal">
+        <div class="modal-content">
+            <p>Welcome to BAFS DOJO!<br>
+            Apart from skill, <br> LUCK also plays a crucial role<br> in turning dreams into reality.<br><br>
+            Classify accounting items into the <br> correct sections in Financial Statements.<br>
+            Flip the right cups to find <br><strong><u>all 95 Darumas</u></strong>!<br><br>
+            Practice makes perfect!<br>
+            May LUCK be your faithful companion <br>on every journey you embark on.</p>
+            <button id="continue-button">Continue</button>
+        </div>
+    </div>
+    <div class="start-page">
+        <h1>May the Force be with You</h1>
+        <div class="score">Score: 0 / 0</div>
+        <img class="start-button" src="https://i.postimg.cc/cC6cmTND/daruma.png" alt="Start Button">
+    </div>
+    <div class="game-content">
+        <img class="end-button" src="https://i.postimg.cc/gJ2qDd9y/exit.webp" alt="End Game">
+        <h1>May the Force be with You</h1>
+        <div class="score-wrapper">
+            <div class="score" id="score">Score: 0 / 0</div>
+        </div>
+        <div class="question-wrapper">
+            <div class="question" id="question"></div>
+        </div>
+        <div class="name-tag-container tag1">
+            <img class="name-tag" src="https://i.postimg.cc/L4NC1CPF/name-tag.png" alt="Name Tag">
+            <div class="name-tag-text">Income Statement</div>
+        </div>
+        <div class="row">
+            <div class="cup-container">
+                <div class="cup" data-section="Trading"></div>
+                <img class="reveal-image" src="" alt="reveal">
+                <div class="section-label">Trading</div>
+            </div>
+            <div class="cup-container">
+                <div class="cup" data-section="P&L - Other Income"></div>
+                <img class="reveal-image" src="" alt="reveal">
+                <div class="section-label">P&L - <br> Other Income</div>
+            </div>
+            <div class="cup-container">
+                <div class="cup" data-section="P&L - Other Expenses"></div>
+                <img class="reveal-image" src="" alt="reveal">
+                <div class="section-label">P&L - <br> Other Expenses</div>
+            </div>
+        </div>
+        <div class="spacer-row"></div>
+        <div class="spacer-row"></div>
+        <div class="spacer-row"></div>
+        <div class="name-tag-container tag2">
+            <img class="name-tag" src="https://i.postimg.cc/L4NC1CPF/name-tag.png" alt="Name Tag">
+            <div class="name-tag-text">Statement of Financial Position</div>
+        </div>
+        <div class="row">
+            <div class="cup-container">
+                <div class="cup" data-section="NCA"></div>
+                <img class="reveal-image" src="" alt="reveal">
+                <div class="section-label">NCA</div>
+            </div>
+            <div class="cup-container">
+                <div class="cup" data-section="CA"></div>
+                <img class="reveal-image" src="" alt="reveal">
+                <div class="section-label">CA</div>
+            </div>
+            <div class="cup-container">
+                <div class="cup" data-section="C"></div>
+                <img class="reveal-image" src="" alt="reveal">
+                <div class="section-label">C</div>
+            </div>
+            <div class="cup-container">
+                <div class="cup" data-section="NCL"></div>
+                <img class="reveal-image" src="" alt="reveal">
+                <div class="section-label">NCL</div>
+            </div>
+            <div class="cup-container">
+                <div class="cup" data-section="CL"></div>
+                <img class="reveal-image" src="" alt="reveal">
+                <div class="section-label">CL</div>
+            </div>
+        </div>
+        <div class="feedback" id="feedback"></div>
+    </div>
+    <a href="https://www.instagram.com/bafsdojo?igsh=MXhnNW9zN3JjMXJoMg%3D%3D&utm_source=qr" target="_blank">
+        <img src="https://i.postimg.cc/0yMN6650/bafs-dojo.jpg" alt="BAFS Logo" class="logo">
+    </a>
+
+    <script>
+        const items = [
+            { name: "Abnormal inventory loss", sections: ["Trading", "P&L - Other Expenses"], multiple: true },
+            { name: "Accrued expenses", sections: ["CL"] },
+            { name: "Accrued income", sections: ["CA"] },
+            { name: "Accumulated Depreciation – [NCA]", sections: ["NCA"] },
+            { name: "Administrative expenses", sections: ["P&L - Other Expenses"] },
+            { name: "Advertising", sections: ["P&L - Other Expenses"] },
+            { name: "Allowance for doubtful accounts / debts", sections: ["CA"] },
+            { name: "Bad debts", sections: ["P&L - Other Expenses"] },
+            { name: "Bank", sections: ["CA"] },
+            { name: "Bank charges", sections: ["P&L - Other Expenses"] },
+            { name: "Bank interest income", sections: ["P&L - Other Income"] },
+            { name: "Bank loan", sections: ["NCL"] },
+            { name: "Bank overdraft", sections: ["CL"] },
+            { name: "Buildings", sections: ["NCA"] },
+            { name: "Capital", sections: ["C"] },
+            { name: "Carriage inwards", sections: ["Trading"] },
+            { name: "Carriage outwards", sections: ["P&L - Other Expenses"] },
+            { name: "Cash", sections: ["CA"] },
+            { name: "Cleaning", sections: ["sockP&L - Other Expenses"] },
+            { name: "Commissions expenses", sections: ["P&L - Other Expenses"] },
+            { name: "Commissions income", sections: ["P&L - Other Income"] },
+            { name: "Decrease in bad debts", sections: ["P&L - Other Income"] },
+            { name: "Deposit from customers (refundable)", sections: ["CL"] },
+            { name: "Deposit to suppliers (refundable)", sections: ["CA"] },
+            { name: "Depreciation – [NCA]", sections: ["P&L - Other Expenses"] },
+            { name: "Discounts allowed", sections: ["P&L - Other Expenses"] },
+            { name: "Discounts received", sections: ["P&L - Other Income"] },
+            { name: "Drawings", sections: ["C"] },
+            { name: "Electricity", sections: ["P&L - Other Expenses"] },
+            { name: "Fixed deposit", sections: ["CA"] },
+            { name: "Fixtures and fittings", sections: ["NCA"] },
+            { name: "General / Sundry / Office / Miscellaneous expenses", sections: ["P&L - Other Expenses"] },
+            { name: "Heating and lighting", sections: ["P&L - Other Expenses"] },
+            { name: "Insurance", sections: ["P&L - Other Expenses"] },
+            { name: "Insurance compensation receivables", sections: ["CA"] },
+            { name: "Interest on deposit", sections: ["P&L - Other Income"] },
+            { name: "Interest on [loan from A]", sections: ["P&L - Other Expenses"] },
+            { name: "Interest on [loan to B]", sections: ["P&L - Other Income"] },
+            { name: "Interest on overdraft", sections: ["P&L - Other Expenses"] },
+            { name: "Internet charges", sections: ["P&L - Other Expenses"] },
+            { name: "Inventory, as at year start", sections: ["Trading"] },
+            { name: "Inventory, as at year end", sections: ["Trading", "CA"], multiple: true },
+            { name: "Land", sections: ["NCA"] },
+            { name: "Loan from C", sections: ["NCL"] },
+            { name: "Loan to D", sections: ["NCA"] },
+            { name: "Loan interest expenses", sections: ["P&L - Other Expenses"] },
+            { name: "Long-term investments", sections: ["NCA"] },
+            { name: "Loss on disposal of [NCA]", sections: ["P&L - Other Expenses"] },
+            { name: "Machinery", sections: ["NCA"] },
+            { name: "Management fees", sections: ["P&L - Other Expenses"] },
+            { name: "Motor expenses", sections: ["P&L - Other Expenses"] },
+            { name: "Motor repairs", sections: ["P&L - Other Expenses"] },
+            { name: "Motor vehicles", sections: ["NCA"] },
+            { name: "Net loss", sections: ["C"] },
+            { name: "Net profit", sections: ["C"] },
+            { name: "New capital contribution", sections: ["C"] },
+            { name: "Office equipment", sections: ["NCA"] },
+            { name: "Other payables", sections: ["CL"] },
+            { name: "Other receivables", sections: ["CA"] },
+            { name: "Postages", sections: ["P&L - Other Expenses"] },
+            { name: "Premises", sections: ["NCA"] },
+            { name: "Prepaid expenses", sections: ["CA"] },
+            { name: "Printing and stationery", sections: ["P&L - Other Expenses"] },
+            { name: "Profit on disposal of [NCA]", sections: ["P&L - Other Income"] },
+            { name: "Purchases", sections: ["Trading"] },
+            { name: "Purchases returns", sections: ["Trading"] },
+            { name: "Rent and rates", sections: ["P&L - Other Expenses"] },
+            { name: "Rental deposit from tenants", sections: ["CL"] },
+            { name: "Rental deposit to landlords", sections: ["CA"] },
+            { name: "Rental income", sections: ["P&L - Other Income"] },
+            { name: "Repairs and maintenance", sections: ["P&L - Other Expenses"] },
+            { name: "Returns inwards", sections: ["Trading"] },
+            { name: "Returns outwards", sections: ["Trading"] },
+            { name: "Revenue", sections: ["Trading"] },
+            { name: "Revenue returns", sections: ["Trading"] },
+            { name: "Sales", sections: ["Trading"] },
+            { name: "Sales returns", sections: ["Trading"] },
+            { name: "Selling and distribution costs", sections: ["P&L - Other Expenses"] },
+            { name: "Short-term investments", sections: ["CA"] },
+            { name: "Staff welfare and entertainment", sections: ["P&L - Other Expenses"] },
+            { name: "Telecommunications", sections: ["P&L - Other Expenses"] },
+            { name: "Telephone", sections: ["P&L - Other Expenses"] },
+            { name: "Time deposit", sections: ["CA"] },
+            { name: "Trade payables", sections: ["CL"] },
+            { name: "Trade receivables", sections: ["CA"] },
+            { name: "Travelling", sections: ["P&L - Other Expenses"] },
+            { name: "Unearned income", sections: ["CL"] },
+            { name: "Utilities", sections: ["P&L - Other Expenses"] },
+            { name: "Wages and salaries", sections: ["P&L - Other Expenses"] },
+            { name: "Water", sections: ["P&L - Other Expenses"] },
+            { name: "Sundry expenses", sections: ["P&L - Other Expenses"] },
+            { name: "Office expenses", sections: ["P&L - Other Expenses"] },
+            { name: "Miscellaneous expenses", sections: ["P&L - Other Expenses"] },
+            { name: "Term deposit", sections: ["CA"] },
+            { name: "Gain on disposal of [NCA]", sections: ["P&L - Other Income"] }
+        ];
+
+        let currentItem;
+        let scoreCorrect = 0;
+        let totalQuestions = 0;
+        const cups = document.querySelectorAll('.cup');
+        const questionDiv = document.getElementById('question');
+        const feedbackDiv = document.getElementById('feedback');
+        const scoreDiv = document.getElementById('score');
+        const startPage = document.querySelector('.start-page');
+        const gameContent = document.querySelector('.game-content');
+        const startButton = document.querySelector('.start-button');
+        const endButton = document.querySelector('.end-button');
+        const instructionModal = document.getElementById('instruction-modal');
+        const continueButton = document.getElementById('continue-button');
+
+        // Start button click handler to show modal
+        startButton.addEventListener('click', () => {
+            instructionModal.style.display = 'flex';
+        });
+
+        // Continue button click handler to show game content
+        continueButton.addEventListener('click', () => {
+            instructionModal.style.display = 'none';
+            startPage.style.display = 'none';
+            gameContent.style.display = 'block';
+        });
+
+        // End button click handler
+        endButton.addEventListener('click', () => {
+            feedbackDiv.textContent = 'Game Over!';
+            cups.forEach(cup => {
+                cup.classList.add('disappear');
+                cup.style.pointerEvents = 'none';
+                const revealImage = cup.nextElementSibling;
+                if (currentItem.sections.includes(cup.dataset.section)) {
+                    revealImage.src = 'https://i.postimg.cc/cC6cmTND/daruma.png';
+                } else {
+                    revealImage.src = 'https://i.postimg.cc/Wz6s5m6k/monster.png';
+                }
+                revealImage.style.display = 'block';
+            });
+            endButton.style.pointerEvents = 'none'; // Disable end button after use
+        });
+
+        function getRandomItem() {
+            const index = Math.floor(Math.random() * items.length);
+            const item = items[index];
+            items.splice(index, 1); // Remove the item to avoid repetition
+            return item;
+        }
+
+        function setNewQuestion() {
+            if (items.length === 0) {
+                questionDiv.textContent = "";
+                feedbackDiv.textContent = "Game Over!";
+                cups.forEach(cup => cup.style.pointerEvents = 'none');
+                endButton.style.pointerEvents = 'none';
+                return;
+            }
+            currentItem = getRandomItem();
+            questionDiv.textContent = currentItem.name;
+            cups.forEach(cup => {
+                cup.classList.remove('selected');
+                cup.classList.remove('hovered');
+                cup.classList.remove('disappear');
+                const revealImage = cup.nextElementSibling;
+                revealImage.src = '';
+                revealImage.style.display = 'none';
+                cup.style.pointerEvents = 'auto';
+            });
+            feedbackDiv.textContent = '';
+            endButton.style.pointerEvents = 'auto'; // Re-enable end button for new question
+        }
+
+        function updateScore(isCorrect) {
+            totalQuestions++;
+            if (isCorrect) scoreCorrect++;
+            scoreDiv.textContent = `Score: ${scoreCorrect} / ${totalQuestions}`;
+        }
+
+        cups.forEach(cup => {
+            cup.addEventListener('mouseenter', () => {
+                if (!cup.classList.contains('selected') && !cup.classList.contains('disappear')) {
+                    cup.classList.add('hovered');
+                }
+            });
+
+            cup.addEventListener('mouseleave', () => {
+                cup.classList.remove('hovered');
+            });
+
+            cup.addEventListener('click', () => {
+                const selectedSections = [];
+                if (currentItem.multiple) {
+                    cup.classList.toggle('selected');
+                    selectedSections.push(...Array.from(cups)
+                        .filter(c => c.classList.contains('selected'))
+                        .map(c => c.dataset.section));
+                } else {
+                    cups.forEach(c => {
+                        c.classList.remove('selected');
+                        c.classList.remove('disappear');
+                        c.nextElementSibling.src = '';
+                        c.nextElementSibling.style.display = 'none';
+                    });
+                    cup.classList.add('selected');
+                    selectedSections.push(cup.dataset.section);
+                }
+
+                // Check correctness
+                const correctSections = currentItem.sections;
+                const isCorrect = selectedSections.length === correctSections.length &&
+                    selectedSections.every(section => correctSections.includes(section)) &&
+                    correctSections.every(section => selectedSections.includes(section));
+
+                // Set reveal images for selected cups
+                cups.forEach(c => {
+                    const revealImage = c.nextElementSibling;
+                    if (c.classList.contains('selected')) {
+                        if (correctSections.includes(c.dataset.section)) {
+                            revealImage.src = 'https://i.postimg.cc/cC6cmTND/daruma.png';
+                        } else {
+                            revealImage.src = 'https://i.postimg.cc/Wz6s5m6k/monster.png';
+                        }
+                        revealImage.style.display = 'block';
+                    }
+                });
+
+                // If incorrect, make correct cups disappear
+                if (!isCorrect) {
+                    cups.forEach(c => {
+                        if (currentItem && currentItem.sections && currentItem.sections.includes(c.dataset.section) && !c.classList.contains('selected')) {
+                            c.classList.add('disappear');
+                            c.nextElementSibling.src = 'https://i.postimg.cc/cC6cmTND/daruma.png';
+                            c.nextElementSibling.style.display = 'block';
+                        }
+                    });
+                }
+
+                // Update feedback and score
+                if (isCorrect) {
+                    feedbackDiv.textContent = 'Correct!';
+                    feedbackDiv.className = 'feedback correct';
+                    updateScore(true);
+                } else {
+                    feedbackDiv.textContent = `Incorrect. Correct answer: ${correctSections.join(', ')}`;
+                    feedbackDiv.className = 'feedback incorrect';
+                    updateScore(false);
+                }
+
+                cups.forEach(cup => cup.style.pointerEvents = 'none');
+                setTimeout(setNewQuestion, 2000); // Move to next question after 2 seconds
+            });
+        });
+
+        // Start the game
+        setNewQuestion();
+    </script>
+</body>
+</html>
