@@ -1,43 +1,4 @@
-<script type="text/javascript">
-        var gk_isXlsx = false;
-        var gk_xlsxFileLookup = {};
-        var gk_fileData = {};
-        function filledCell(cell) {
-          return cell !== '' && cell != null;
-        }
-        function loadFileData(filename) {
-        if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
-            try {
-                var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
-                var firstSheetName = workbook.SheetNames[0];
-                var worksheet = workbook.Sheets[firstSheetName];
-
-                // Convert sheet to JSON to filter blank rows
-                var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
-                // Filter out blank rows (rows where all cells are empty, null, or undefined)
-                var filteredData = jsonData.filter(row => row.some(filledCell));
-
-                // Heuristic to find the header row by ignoring rows with fewer filled cells than the next row
-                var headerRowIndex = filteredData.findIndex((row, index) =>
-                  row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
-                );
-                // Fallback
-                if (headerRowIndex === -1 || headerRowIndex > 25) {
-                  headerRowIndex = 0;
-                }
-
-                // Convert filtered JSON back to CSV
-                var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex)); // Create a new sheet from filtered array of arrays
-                csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
-                return csv;
-            } catch (e) {
-                console.error(e);
-                return "";
-            }
-        }
-        return gk_fileData[filename] || "";
-        }
-        </script><!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -91,6 +52,47 @@
             padding: 1rem;
             position: relative;
             text-align: center;
+            padding-bottom: 2rem;
+        }
+        .result-page {
+            display: none;
+            max-width: 90%;
+            margin: 0 auto;
+            padding: 1rem;
+            text-align: center;
+        }
+        .result-page .results-container {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 1rem;
+        }
+        .result-page .correct-answers, .result-page .incorrect-answers {
+            width: 45%;
+            text-align: left;
+        }
+        .result-page h2 {
+            font-size: 1.2rem;
+            color: #e68434;
+            margin-bottom: 0.5rem;
+        }
+        .result-page ol, .result-page ul {
+            list-style-position: inside;
+            font-size: 0.9rem;
+            color: #333;
+        }
+        .result-page .back-button {
+            margin-top: 1rem;
+            padding: 0.5rem 1rem;
+            background-color: #c93c13;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: bold;
+        }
+        .result-page .back-button:hover {
+            background-color: #a53210;
         }
         .end-button {
             position: absolute;
@@ -131,30 +133,39 @@
             cursor: pointer;
             font-size: 0;
             text-align: center;
-            transition: opacity 0.5s ease;
             position: relative;
             z-index: 2;
         }
         .cup:hover:not(.selected):not(.disappear), .cup.hovered:not(.selected):not(.disappear) {
             background-image: url('https://i.postimg.cc/NfTtY2Fn/toggled-cup.png');
         }
-        .cup.selected {
-            opacity: 0;
-            pointer-events: none;
+        .cup.selected, .cup.disappear {
+            animation: exitEffect 1s ease-in-out forwards;
         }
-        .cup.disappear {
-            opacity: 0;
-            pointer-events: none;
+        @keyframes exitEffect {
+            0% {
+                opacity: 1;
+                transform: translate(0, 0) scale(1);
+            }
+            99% {
+                opacity: 1;
+                transform: translate(100px, -173px) scale(0.5); /* 1 o'clock direction */
+            }
+            100% {
+                opacity: 0;
+                transform: translate(100px, -173px) scale(0.5);
+            }
         }
         .reveal-image {
             position: absolute;
             top: 50%;
             left: 50%;
-            width: 40px;
-            height: 40px;
+            width: 120px;
+            height: 120px;
             transform: translate(-50%, -50%);
             display: none;
             z-index: 1;
+            animation-delay: 1s; /* Show after exit animation */
         }
         .cup.selected + .reveal-image,
         .cup.disappear + .reveal-image {
@@ -201,10 +212,11 @@
             color: red;
         }
         .logo {
-            position: absolute;
+            position: fixed;
             bottom: 1rem;
             left: 1rem;
-            width: 80px;
+            width: 90px;
+            z-index: 10;
             cursor: pointer;
         }
         h1 {
@@ -303,6 +315,15 @@
             }
             .game-content {
                 padding: 0.5rem;
+                padding-bottom: 2rem;
+            }
+            .result-page .results-container {
+                flex-direction: column;
+                align-items: center;
+            }
+            .result-page .correct-answers, .result-page .incorrect-answers {
+                width: 100%;
+                margin-bottom: 1rem;
             }
             .cup-container {
                 width: 54px;
@@ -315,8 +336,8 @@
                 font-size: 0;
             }
             .reveal-image {
-                width: 35px;
-                height: 35px;
+                width: 105px;
+                height: 105px;
             }
             .section-label {
                 font-size: 0.7rem;
@@ -335,7 +356,7 @@
                 font-size: 0.8rem;
             }
             .logo {
-                width: 60px;
+                width: 72px;
             }
             h1 {
                 font-size: 1rem;
@@ -371,8 +392,8 @@
                 height: 42px;
             }
             .reveal-image {
-                width: 35px;
-                height: 35px;
+                width: 105px;
+                height: 105px;
             }
             .section-label {
                 font-size: 0.6rem;
@@ -481,6 +502,20 @@
         </div>
         <div class="feedback" id="feedback"></div>
     </div>
+    <div class="result-page">
+        <h1>Game Results</h1>
+        <div class="results-container">
+            <div class="correct-answers">
+                <h2>Correct Answers</h2>
+                <ol id="correct-answers-list"></ol>
+            </div>
+            <div class="incorrect-answers">
+                <h2>Incorrect Answers</h2>
+                <ul id="incorrect-answers-list"></ul>
+            </div>
+        </div>
+        <button class="back-button">Back to Start</button>
+    </div>
     <a href="https://www.instagram.com/bafsdojo?igsh=MXhnNW9zN3JjMXJoMg%3D%3D&utm_source=qr" target="_blank">
         <img src="https://i.postimg.cc/0yMN6650/bafs-dojo.jpg" alt="BAFS Logo" class="logo">
     </a>
@@ -505,7 +540,7 @@
             { name: "Carriage inwards", sections: ["Trading"] },
             { name: "Carriage outwards", sections: ["P&L - Other Expenses"] },
             { name: "Cash", sections: ["CA"] },
-            { name: "Cleaning", sections: ["sockP&L - Other Expenses"] },
+            { name: "Cleaning", sections: ["P&L - Other Expenses"] },
             { name: "Commissions expenses", sections: ["P&L - Other Expenses"] },
             { name: "Commissions income", sections: ["P&L - Other Income"] },
             { name: "Decrease in bad debts", sections: ["P&L - Other Income"] },
@@ -587,16 +622,22 @@
         let currentItem;
         let scoreCorrect = 0;
         let totalQuestions = 0;
+        let correctAnswers = [];
+        let incorrectAnswers = [];
         const cups = document.querySelectorAll('.cup');
         const questionDiv = document.getElementById('question');
         const feedbackDiv = document.getElementById('feedback');
         const scoreDiv = document.getElementById('score');
         const startPage = document.querySelector('.start-page');
         const gameContent = document.querySelector('.game-content');
+        const resultPage = document.querySelector('.result-page');
         const startButton = document.querySelector('.start-button');
         const endButton = document.querySelector('.end-button');
         const instructionModal = document.getElementById('instruction-modal');
         const continueButton = document.getElementById('continue-button');
+        const backButton = document.querySelector('.back-button');
+        const correctAnswersList = document.getElementById('correct-answers-list');
+        const incorrectAnswersList = document.getElementById('incorrect-answers-list');
 
         // Start button click handler to show modal
         startButton.addEventListener('click', () => {
@@ -610,7 +651,25 @@
             gameContent.style.display = 'block';
         });
 
-        // End button click handler
+        // Back button click handler to return to start page
+        backButton.addEventListener('click', () => {
+            resultPage.style.display = 'none';
+            startPage.style.display = 'flex';
+            gameContent.style.display = 'none';
+            // Reset game state
+            scoreCorrect = 0;
+            totalQuestions = 0;
+            correctAnswers = [];
+            incorrectAnswers = [];
+            scoreDiv.textContent = `Score: 0 / 0`;
+            feedbackDiv.textContent = '';
+            items.push(...correctAnswers, ...incorrectAnswers.map(a => a.item));
+            correctAnswersList.innerHTML = '';
+            incorrectAnswersList.innerHTML = '';
+            setNewQuestion();
+        });
+
+        // End button click handler to show result page
         endButton.addEventListener('click', () => {
             feedbackDiv.textContent = 'Game Over!';
             cups.forEach(cup => {
@@ -624,7 +683,12 @@
                 }
                 revealImage.style.display = 'block';
             });
-            endButton.style.pointerEvents = 'none'; // Disable end button after use
+            endButton.style.pointerEvents = 'none';
+            gameContent.style.display = 'none';
+            resultPage.style.display = 'block';
+            // Populate result lists
+            correctAnswersList.innerHTML = correctAnswers.map((item, index) => `<li>${index + 1}. ${item.name}</li>`).join('');
+            incorrectAnswersList.innerHTML = incorrectAnswers.map(item => `<li>${item.item.name} (Correct: ${item.correctSections.join(', ')})</li>`).join('');
         });
 
         function getRandomItem() {
@@ -648,18 +712,23 @@
                 cup.classList.remove('selected');
                 cup.classList.remove('hovered');
                 cup.classList.remove('disappear');
+                cup.style.pointerEvents = 'auto';
                 const revealImage = cup.nextElementSibling;
                 revealImage.src = '';
                 revealImage.style.display = 'none';
-                cup.style.pointerEvents = 'auto';
             });
             feedbackDiv.textContent = '';
-            endButton.style.pointerEvents = 'auto'; // Re-enable end button for new question
+            endButton.style.pointerEvents = 'auto';
         }
 
-        function updateScore(isCorrect) {
+        function updateScore(isCorrect, selectedSections) {
             totalQuestions++;
-            if (isCorrect) scoreCorrect++;
+            if (isCorrect) {
+                scoreCorrect++;
+                correctAnswers.push(currentItem);
+            } else {
+                incorrectAnswers.push({ item: currentItem, correctSections });
+            }
             scoreDiv.textContent = `Score: ${scoreCorrect} / ${totalQuestions}`;
         }
 
@@ -698,26 +767,32 @@
                     selectedSections.every(section => correctSections.includes(section)) &&
                     correctSections.every(section => selectedSections.includes(section));
 
-                // Set reveal images for selected cups
+                // Set reveal images for selected cups with delay
                 cups.forEach(c => {
                     const revealImage = c.nextElementSibling;
                     if (c.classList.contains('selected')) {
-                        if (correctSections.includes(c.dataset.section)) {
-                            revealImage.src = 'https://i.postimg.cc/cC6cmTND/daruma.png';
-                        } else {
-                            revealImage.src = 'https://i.postimg.cc/Wz6s5m6k/monster.png';
-                        }
-                        revealImage.style.display = 'block';
+                        setTimeout(() => {
+                            if (correctSections.includes(c.dataset.section)) {
+                                revealImage.src = 'https://i.postimg.cc/cC6cmTND/daruma.png';
+                            } else {
+                                revealImage.src = 'https://i.postimg.cc/Wz6s5m6k/monster.png';
+                            }
+                            revealImage.style.display = 'block';
+                            c.style.pointerEvents = 'none';
+                        }, 1000);
                     }
                 });
 
-                // If incorrect, make correct cups disappear
+                // If incorrect, make correct cups disappear with exit effect
                 if (!isCorrect) {
                     cups.forEach(c => {
                         if (currentItem && currentItem.sections && currentItem.sections.includes(c.dataset.section) && !c.classList.contains('selected')) {
                             c.classList.add('disappear');
-                            c.nextElementSibling.src = 'https://i.postimg.cc/cC6cmTND/daruma.png';
-                            c.nextElementSibling.style.display = 'block';
+                            setTimeout(() => {
+                                c.nextElementSibling.src = 'https://i.postimg.cc/cC6cmTND/daruma.png';
+                                c.nextElementSibling.style.display = 'block';
+                                c.style.pointerEvents = 'none';
+                            }, 1000);
                         }
                     });
                 }
@@ -726,15 +801,15 @@
                 if (isCorrect) {
                     feedbackDiv.textContent = 'Correct!';
                     feedbackDiv.className = 'feedback correct';
-                    updateScore(true);
+                    updateScore(true, selectedSections);
                 } else {
                     feedbackDiv.textContent = `Incorrect. Correct answer: ${correctSections.join(', ')}`;
                     feedbackDiv.className = 'feedback incorrect';
-                    updateScore(false);
+                    updateScore(false, correctSections);
                 }
 
                 cups.forEach(cup => cup.style.pointerEvents = 'none');
-                setTimeout(setNewQuestion, 2000); // Move to next question after 2 seconds
+                setTimeout(setNewQuestion, 2000);
             });
         });
 
