@@ -140,20 +140,21 @@
             background-image: url('https://i.postimg.cc/NfTtY2Fn/toggled-cup.png');
         }
         .cup.selected, .cup.disappear {
-            animation: exitEffect 1s ease-in-out forwards;
+            animation: exitEffect 0.5s ease-in-out forwards;
+            background-image: url('https://i.postimg.cc/NfTtY2Fn/toggled-cup.png');
         }
         @keyframes exitEffect {
             0% {
                 opacity: 1;
-                transform: translate(0, 0) scale(1);
+                transform: translate(0, 0);
             }
             99% {
                 opacity: 1;
-                transform: translate(100px, -173px) scale(0.5); /* 1 o'clock direction */
+                transform: translate(51.8px, -190.2px); /* 0.5 o'clock direction */
             }
             100% {
                 opacity: 0;
-                transform: translate(100px, -173px) scale(0.5);
+                transform: translate(51.8px, -190.2px);
             }
         }
         .reveal-image {
@@ -163,13 +164,14 @@
             width: 120px;
             height: 120px;
             transform: translate(-50%, -50%);
-            display: none;
+            display: block;
+            opacity: 0;
             z-index: 1;
-            animation-delay: 1s; /* Show after exit animation */
+            transition: opacity 0.2s ease;
         }
         .cup.selected + .reveal-image,
         .cup.disappear + .reveal-image {
-            display: block;
+            opacity: 1;
         }
         .section-label {
             font-size: 0.9rem;
@@ -336,8 +338,8 @@
                 font-size: 0;
             }
             .reveal-image {
-                width: 105px;
-                height: 105px;
+                width: 54px;
+                height: auto;
             }
             .section-label {
                 font-size: 0.7rem;
@@ -392,8 +394,8 @@
                 height: 42px;
             }
             .reveal-image {
-                width: 105px;
-                height: 105px;
+                width: 42px;
+                height: auto;
             }
             .section-label {
                 font-size: 0.6rem;
@@ -681,7 +683,7 @@
                 } else {
                     revealImage.src = 'https://i.postimg.cc/Wz6s5m6k/monster.png';
                 }
-                revealImage.style.display = 'block';
+                revealImage.style.opacity = '1';
             });
             endButton.style.pointerEvents = 'none';
             gameContent.style.display = 'none';
@@ -714,8 +716,10 @@
                 cup.classList.remove('disappear');
                 cup.style.pointerEvents = 'auto';
                 const revealImage = cup.nextElementSibling;
-                revealImage.src = '';
-                revealImage.style.display = 'none';
+                revealImage.src = currentItem.sections.includes(cup.dataset.section)
+                    ? 'https://i.postimg.cc/cC6cmTND/daruma.png'
+                    : 'https://i.postimg.cc/Wz6s5m6k/monster.png';
+                revealImage.style.opacity = '0';
             });
             feedbackDiv.textContent = '';
             endButton.style.pointerEvents = 'auto';
@@ -754,8 +758,6 @@
                     cups.forEach(c => {
                         c.classList.remove('selected');
                         c.classList.remove('disappear');
-                        c.nextElementSibling.src = '';
-                        c.nextElementSibling.style.display = 'none';
                     });
                     cup.classList.add('selected');
                     selectedSections.push(cup.dataset.section);
@@ -767,49 +769,34 @@
                     selectedSections.every(section => correctSections.includes(section)) &&
                     correctSections.every(section => selectedSections.includes(section));
 
-                // Set reveal images for selected cups with delay
+                // Handle reveal images
                 cups.forEach(c => {
                     const revealImage = c.nextElementSibling;
                     if (c.classList.contains('selected')) {
-                        setTimeout(() => {
-                            if (correctSections.includes(c.dataset.section)) {
-                                revealImage.src = 'https://i.postimg.cc/cC6cmTND/daruma.png';
-                            } else {
-                                revealImage.src = 'https://i.postimg.cc/Wz6s5m6k/monster.png';
-                            }
-                            revealImage.style.display = 'block';
-                            c.style.pointerEvents = 'none';
-                        }, 1000);
+                        revealImage.style.opacity = '1';
+                        c.style.pointerEvents = 'none';
+                    }
+                    if (!isCorrect && currentItem.sections.includes(c.dataset.section) && !c.classList.contains('selected')) {
+                        c.classList.add('disappear');
+                        revealImage.style.opacity = '1';
+                        c.style.pointerEvents = 'none';
                     }
                 });
-
-                // If incorrect, make correct cups disappear with exit effect
-                if (!isCorrect) {
-                    cups.forEach(c => {
-                        if (currentItem && currentItem.sections && currentItem.sections.includes(c.dataset.section) && !c.classList.contains('selected')) {
-                            c.classList.add('disappear');
-                            setTimeout(() => {
-                                c.nextElementSibling.src = 'https://i.postimg.cc/cC6cmTND/daruma.png';
-                                c.nextElementSibling.style.display = 'block';
-                                c.style.pointerEvents = 'none';
-                            }, 1000);
-                        }
-                    });
-                }
 
                 // Update feedback and score
                 if (isCorrect) {
                     feedbackDiv.textContent = 'Correct!';
                     feedbackDiv.className = 'feedback correct';
                     updateScore(true, selectedSections);
+                    cups.forEach(cup => cup.style.pointerEvents = 'none');
+                    setTimeout(setNewQuestion, 1000); // Proceed after 1 second
                 } else {
                     feedbackDiv.textContent = `Incorrect. Correct answer: ${correctSections.join(', ')}`;
                     feedbackDiv.className = 'feedback incorrect';
                     updateScore(false, correctSections);
+                    cups.forEach(cup => cup.style.pointerEvents = 'none');
+                    setTimeout(setNewQuestion, 1000); // Show images for 1 second, then next question
                 }
-
-                cups.forEach(cup => cup.style.pointerEvents = 'none');
-                setTimeout(setNewQuestion, 2000);
             });
         });
 
