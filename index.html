@@ -53,6 +53,7 @@
             position: relative;
             text-align: center;
             padding-bottom: 2rem;
+            cursor: url('https://i.postimg.cc/56XXW9WM/hand-cursor.png') 16 16, pointer;
         }
         .result-page {
             display: none;
@@ -61,24 +62,85 @@
             padding: 1rem;
             text-align: center;
         }
-        .result-page .results-container {
-            display: flex;
-            justify-content: space-between;
-            margin-top: 1rem;
+        .result-page h1 {
+            font-size: 1.5em;
+            text-align: center;
+            margin: 10px 0;
+            color: #e68434;
         }
-        .result-page .correct-answers, .result-page .incorrect-answers {
-            width: 45%;
+        .result-page .score {
+            font-size: 1rem;
+            background-color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            margin-bottom: 1rem;
+            display: inline-block;
+        }
+        #results-container {
+            display: none;
+            width: 100%;
+            max-width: 360px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: center;
+            margin-top: 10px;
+        }
+        #correct-answers, #wrong-answers {
+            background-color: #fff;
+            padding: 10px;
+            border-radius: 5px;
+            font-size: 0.9em;
+            flex: 1;
+            position: relative;
+        }
+        #correct-answers {
+            margin-right: 5px;
+        }
+        #wrong-answers {
+            margin-left: 5px;
+        }
+        #correct-answers h3, #wrong-answers h3 {
+            margin: 0 0 5px;
+            font-size: 1em;
+            margin-right: 30px;
             text-align: left;
         }
-        .result-page h2 {
-            font-size: 1.2rem;
-            color: #e68434;
-            margin-bottom: 0.5rem;
+        #correct-answers ul, #wrong-answers ul {
+            list-style-type: decimal;
+            text-align: left;
+            padding-left: 20px;
+            margin: 0;
         }
-        .result-page ol, .result-page ul {
-            list-style-position: inside;
-            font-size: 0.9rem;
+        #correct-answers li, #wrong-answers li {
+            margin: 3px 0;
+        }
+        #correct-answers ul {
+            list-style-position: outside;
+            margin-left: 0;
+        }
+        #wrong-answers li {
+            margin-bottom: 20px;
+        }
+        #copy-icon, #copy-correct-icon {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            width: 20px;
+            cursor: pointer;
+        }
+        #copy-feedback, #copy-correct-feedback {
+            display: none;
+            position: absolute;
+            top: 35px;
+            right: 10px;
+            background-color: #fff;
             color: #333;
+            padding: 5px 10px;
+            border-radius: 3px;
+            font-size: 0.8em;
+            border: 1px solid #ccc;
+            z-index: 15;
         }
         .result-page .back-button {
             margin-top: 1rem;
@@ -93,6 +155,14 @@
         }
         .result-page .back-button:hover {
             background-color: #a53210;
+        }
+        .end-message {
+            font-family: 'Bai Jamjuree', sans-serif;
+            font-size: 1.5em;
+            color: #e68434;
+            text-align: center;
+            margin: 10px 0;
+            font-weight: bold;
         }
         .end-button {
             position: absolute;
@@ -130,31 +200,33 @@
             align-items: center;
             justify-content: center;
             border-radius: 10px;
-            cursor: pointer;
+            cursor: url('https://i.postimg.cc/56XXW9WM/hand-cursor.png') 16 16, pointer;
             font-size: 0;
             text-align: center;
             position: relative;
             z-index: 2;
         }
-        .cup:hover:not(.selected):not(.disappear), .cup.hovered:not(.selected):not(.disappear) {
-            background-image: url('https://i.postimg.cc/NfTtY2Fn/toggled-cup.png');
-        }
         .cup.selected, .cup.disappear {
             animation: exitEffect 0.5s ease-in-out forwards;
             background-image: url('https://i.postimg.cc/NfTtY2Fn/toggled-cup.png');
         }
+        @media (min-width: 601px) {
+            .cup:hover:not(.selected):not(.disappear) {
+                background-image: url('https://i.postimg.cc/NfTtY2Fn/toggled-cup.png');
+            }
+        }
         @keyframes exitEffect {
             0% {
                 opacity: 1;
-                transform: translate(0, 0);
+                transform: translate(0, 0) rotate(0deg);
             }
             99% {
                 opacity: 1;
-                transform: translate(51.8px, -190.2px); /* 0.5 o'clock direction */
+                transform: translate(51.8px, -190.2px) rotate(40deg);
             }
             100% {
                 opacity: 0;
-                transform: translate(51.8px, -190.2px);
+                transform: translate(51.8px, -190.2px) rotate(40deg);
             }
         }
         .reveal-image {
@@ -206,12 +278,6 @@
         .feedback {
             font-size: 0.9rem;
             margin-top: 1rem;
-        }
-        .correct {
-            color: green;
-        }
-        .incorrect {
-            color: red;
         }
         .logo {
             position: fixed;
@@ -298,7 +364,6 @@
         #continue-button:hover {
             background-color: #e0d9c8;
         }
-        /* Media queries for mobile devices */
         @media (max-width: 600px) {
             .start-page h1 {
                 font-size: 1.5rem;
@@ -318,14 +383,22 @@
             .game-content {
                 padding: 0.5rem;
                 padding-bottom: 2rem;
+                cursor: url('https://i.postimg.cc/56XXW9WM/hand-cursor.png') 6 6, pointer;
             }
-            .result-page .results-container {
+            .result-page {
+                padding-bottom: 90px; /* Reserve space for logo and button */
+            }
+            #results-container {
                 flex-direction: column;
-                align-items: center;
             }
-            .result-page .correct-answers, .result-page .incorrect-answers {
+            #correct-answers, #wrong-answers {
+                margin: 0 0 10px 0;
                 width: 100%;
-                margin-bottom: 1rem;
+                height: 115px; /* 8 lines for correct */
+                overflow-y: auto;
+            }
+            #wrong-answers {
+                height: 187px; /* 13 lines for incorrect */
             }
             .cup-container {
                 width: 54px;
@@ -336,6 +409,7 @@
                 width: 54px;
                 height: 54px;
                 font-size: 0;
+                cursor: url('https://i.postimg.cc/56XXW9WM/hand-cursor.png') 6 6, pointer;
             }
             .reveal-image {
                 width: 54px;
@@ -377,12 +451,21 @@
             .spacer-row {
                 height: 0.8rem;
             }
+            #copy-feedback, #copy-correct-feedback {
+                top: 30px;
+                right: 8px;
+                font-size: 0.7em;
+                padding: 4px 8px;
+            }
         }
         @media (max-width: 360px) {
             #instruction-modal .modal-content {
                 max-width: 90%;
                 padding: 15px;
                 font-size: 0.9em;
+            }
+            .game-content {
+                cursor: url('https://i.postimg.cc/56XXW9WM/hand-cursor.png') 5 5, pointer;
             }
             .cup-container {
                 width: 42px;
@@ -392,6 +475,7 @@
             .cup {
                 width: 42px;
                 height: 42px;
+                cursor: url('https://i.postimg.cc/56XXW9WM/hand-cursor.png') 5 5, pointer;
             }
             .reveal-image {
                 width: 42px;
@@ -422,6 +506,17 @@
     </style>
 </head>
 <body>
+    <!-- Audio elements for music and sound effects -->
+    <audio id="background-music" loop>
+        <source src="luckgame_bgm.mp3" type="audio/mpeg">
+    </audio>
+    <audio id="correct">
+        <source src="bell_effect.mp3" type="audio/mpeg">
+    </audio>
+    <audio id="incorrect">
+        <source src="shatter_effect.mp3" type="audio/mpeg">
+    </audio>
+
     <div id="instruction-modal">
         <div class="modal-content">
             <p>Welcome to BAFS DOJO!<br>
@@ -505,15 +600,21 @@
         <div class="feedback" id="feedback"></div>
     </div>
     <div class="result-page">
-        <h1>Game Results</h1>
-        <div class="results-container">
-            <div class="correct-answers">
-                <h2>Correct Answers</h2>
-                <ol id="correct-answers-list"></ol>
+        <h1>May the Force be with You</h1>
+        <div class="score" id="result-score"></div>
+        <div class="end-message" id="end-message"></div>
+        <div id="results-container">
+            <div id="correct-answers">
+                <h3></h3>
+                <img id="copy-correct-icon" src="https://i.postimg.cc/fTZLr9yy/copy-grey.png" alt="Copy Correct Answers">
+                <div id="copy-correct-feedback" class="copy-feedback">Copied!</div>
+                <ul id="correct-answers-list"></ul>
             </div>
-            <div class="incorrect-answers">
-                <h2>Incorrect Answers</h2>
-                <ul id="incorrect-answers-list"></ul>
+            <div id="wrong-answers">
+                <h3></h3>
+                <img id="copy-icon" src="https://i.postimg.cc/fTZLr9yy/copy-grey.png" alt="Copy Incorrect Answers">
+                <div id="copy-feedback" class="copy-feedback">Copied!</div>
+                <ul id="wrong-answers-list"></ul>
             </div>
         </div>
         <button class="back-button">Back to Start</button>
@@ -523,7 +624,7 @@
     </a>
 
     <script>
-        const items = [
+        const originalItems = [
             { name: "Abnormal inventory loss", sections: ["Trading", "P&L - Other Expenses"], multiple: true },
             { name: "Accrued expenses", sections: ["CL"] },
             { name: "Accrued income", sections: ["CA"] },
@@ -621,6 +722,17 @@
             { name: "Gain on disposal of [NCA]", sections: ["P&L - Other Income"] }
         ];
 
+        let items = [...originalItems];
+        const darumaImages = [
+            'https://i.postimg.cc/cC6cmTND/daruma.png',
+            'https://i.postimg.cc/8F4hd5jd/daruma-black.png',
+            'https://i.postimg.cc/ZBq6wSdG/daruma-blue.png',
+            'https://i.postimg.cc/JHDZW5KK/daruma-green.png',
+            'https://i.postimg.cc/c6rQYdZY/daruma-orange.png',
+            'https://i.postimg.cc/ZBDpgMPC/daruma-pink.png',
+            'https://i.postimg.cc/YjZQzTqP/daruma-yellow.png'
+        ];
+
         let currentItem;
         let scoreCorrect = 0;
         let totalQuestions = 0;
@@ -638,19 +750,79 @@
         const instructionModal = document.getElementById('instruction-modal');
         const continueButton = document.getElementById('continue-button');
         const backButton = document.querySelector('.back-button');
+        const resultsContainer = document.getElementById('results-container');
+        const correctAnswersDiv = document.getElementById('correct-answers');
         const correctAnswersList = document.getElementById('correct-answers-list');
-        const incorrectAnswersList = document.getElementById('incorrect-answers-list');
+        const wrongAnswersDiv = document.getElementById('wrong-answers');
+        const wrongAnswersList = document.getElementById('wrong-answers-list');
+        const endMessage = document.getElementById('end-message');
+        const resultScore = document.getElementById('result-score');
+        const copyIcon = document.getElementById('copy-icon');
+        const copyFeedback = document.getElementById('copy-feedback');
+        const copyCorrectIcon = document.getElementById('copy-correct-icon');
+        const copyCorrectFeedback = document.getElementById('copy-correct-feedback');
+        const backgroundMusic = document.getElementById('background-music');
+        const correctSound = document.getElementById('correct');
+        const incorrectSound = document.getElementById('incorrect');
+
+        // Copy icon click handlers
+        async function copyToClipboard(text, feedbackElement) {
+            feedbackElement.style.display = 'block';
+            setTimeout(() => {
+                feedbackElement.style.display = 'none';
+            }, 2000);
+
+            if (navigator.clipboard && window.isSecureContext) {
+                try {
+                    await navigator.clipboard.writeText(text);
+                    return;
+                } catch (err) {
+                    console.warn('Clipboard API failed:', err);
+                }
+            }
+
+            // Fallback for non-secure contexts or older browsers
+            const textarea = document.createElement('textarea');
+            textarea.value = text;
+            textarea.style.position = 'fixed';
+            textarea.style.opacity = '0';
+            document.body.appendChild(textarea);
+            textarea.focus();
+            textarea.select();
+            try {
+                document.execCommand('copy');
+            } catch (err) {
+                console.error('Fallback copy failed:', err);
+            } finally {
+                document.body.removeChild(textarea);
+            }
+        }
+
+        copyIcon.addEventListener('click', () => {
+            const text = incorrectAnswers.length > 0
+                ? incorrectAnswers.map(item => `${item.item.name}: ${item.correctSections.join(', ')}`).join('\n')
+                : 'No incorrect answers';
+            copyToClipboard(text, copyFeedback);
+        });
+
+        copyCorrectIcon.addEventListener('click', () => {
+            const text = correctAnswers.length > 0
+                ? correctAnswers.map(item => `${item.name}: ${item.sections.join(', ')}`).join('\n')
+                : 'No correct answers';
+            copyToClipboard(text, copyCorrectFeedback);
+        });
 
         // Start button click handler to show modal
         startButton.addEventListener('click', () => {
             instructionModal.style.display = 'flex';
         });
 
-        // Continue button click handler to show game content
+        // Continue button click handler to show game content and start background music
         continueButton.addEventListener('click', () => {
             instructionModal.style.display = 'none';
             startPage.style.display = 'none';
             gameContent.style.display = 'block';
+            backgroundMusic.play().catch(err => console.warn('Background music playback failed:', err));
         });
 
         // Back button click handler to return to start page
@@ -658,16 +830,20 @@
             resultPage.style.display = 'none';
             startPage.style.display = 'flex';
             gameContent.style.display = 'none';
-            // Reset game state
+            resultsContainer.style.display = 'none';
             scoreCorrect = 0;
             totalQuestions = 0;
             correctAnswers = [];
             incorrectAnswers = [];
             scoreDiv.textContent = `Score: 0 / 0`;
             feedbackDiv.textContent = '';
-            items.push(...correctAnswers, ...incorrectAnswers.map(a => a.item));
+            items = [...originalItems];
             correctAnswersList.innerHTML = '';
-            incorrectAnswersList.innerHTML = '';
+            wrongAnswersList.innerHTML = '';
+            endMessage.textContent = '';
+            resultScore.textContent = '';
+            backgroundMusic.pause();
+            backgroundMusic.currentTime = 0;
             setNewQuestion();
         });
 
@@ -678,8 +854,8 @@
                 cup.classList.add('disappear');
                 cup.style.pointerEvents = 'none';
                 const revealImage = cup.nextElementSibling;
-                if (currentItem.sections.includes(cup.dataset.section)) {
-                    revealImage.src = 'https://i.postimg.cc/cC6cmTND/daruma.png';
+                if (currentItem && currentItem.sections && currentItem.sections.includes(cup.dataset.section)) {
+                    revealImage.src = darumaImages[Math.floor(Math.random() * darumaImages.length)];
                 } else {
                     revealImage.src = 'https://i.postimg.cc/Wz6s5m6k/monster.png';
                 }
@@ -688,36 +864,67 @@
             endButton.style.pointerEvents = 'none';
             gameContent.style.display = 'none';
             resultPage.style.display = 'block';
-            // Populate result lists
-            correctAnswersList.innerHTML = correctAnswers.map((item, index) => `<li>${index + 1}. ${item.name}</li>`).join('');
-            incorrectAnswersList.innerHTML = incorrectAnswers.map(item => `<li>${item.item.name} (Correct: ${item.correctSections.join(', ')})</li>`).join('');
+            resultsContainer.style.display = 'flex';
+            resultScore.textContent = `Score: ${scoreCorrect} / ${totalQuestions}`;
+            const percentage = totalQuestions > 0 ? (scoreCorrect / totalQuestions * 100) : 0;
+            if (percentage === 100 && scoreCorrect === originalItems.length) {
+                endMessage.textContent = "Congrats! You are the luckiest man on earth! 🙇🏻‍♂️";
+            } else if (percentage === 100 || percentage >= 90) {
+                endMessage.textContent = "You possess almost all the Forces in the universe!";
+            } else if (percentage >= 80) {
+                endMessage.textContent = "Closer to becoming the luckiest man!";
+            } else if (percentage >= 70) {
+                endMessage.textContent = "Good job!";
+            } else if (percentage >= 50) {
+                endMessage.textContent = "Nice Try!";
+            } else {
+                endMessage.innerHTML = "Sadly, you need more practice. <br>Luck comes with hard work.";
+            }
+            correctAnswersDiv.querySelector('h3').textContent = `Congrats! You've got ${correctAnswers.length} out of ${totalQuestions} correct!`;
+            correctAnswersList.innerHTML = '';
+            correctAnswersList.innerHTML = correctAnswers.map(item => `<li>${item.name}: ${item.sections.join(', ')}</li>`).join('');
+            if (incorrectAnswers.length === 0) {
+                wrongAnswersDiv.querySelector('h3').textContent = "You missed 0. Nailed it!";
+                wrongAnswersList.innerHTML = '';
+            } else {
+                wrongAnswersDiv.querySelector('h3').innerHTML = `You missed ${incorrectAnswers.length}.<br>Can do better next time!`;
+                wrongAnswersList.innerHTML = incorrectAnswers.map(item => `
+                    <li>
+                        <strong>${item.item.name}</strong>:<br>
+                        ${item.correctSections.join(', ')}
+                    </li>
+                `).join('');
+            }
+            backgroundMusic.pause();
+            backgroundMusic.currentTime = 0;
         });
 
         function getRandomItem() {
+            if (items.length === 0) return null;
             const index = Math.floor(Math.random() * items.length);
             const item = items[index];
-            items.splice(index, 1); // Remove the item to avoid repetition
+            items.splice(index, 1);
             return item;
         }
 
         function setNewQuestion() {
-            if (items.length === 0) {
+            currentItem = getRandomItem();
+            if (!currentItem) {
                 questionDiv.textContent = "";
                 feedbackDiv.textContent = "Game Over!";
                 cups.forEach(cup => cup.style.pointerEvents = 'none');
                 endButton.style.pointerEvents = 'none';
                 return;
             }
-            currentItem = getRandomItem();
             questionDiv.textContent = currentItem.name;
             cups.forEach(cup => {
                 cup.classList.remove('selected');
-                cup.classList.remove('hovered');
                 cup.classList.remove('disappear');
                 cup.style.pointerEvents = 'auto';
+                cup.style.backgroundImage = "url('https://i.postimg.cc/9QhhfXqQ/original-cup.png')";
                 const revealImage = cup.nextElementSibling;
                 revealImage.src = currentItem.sections.includes(cup.dataset.section)
-                    ? 'https://i.postimg.cc/cC6cmTND/daruma.png'
+                    ? darumaImages[Math.floor(Math.random() * darumaImages.length)]
                     : 'https://i.postimg.cc/Wz6s5m6k/monster.png';
                 revealImage.style.opacity = '0';
             });
@@ -725,29 +932,22 @@
             endButton.style.pointerEvents = 'auto';
         }
 
-        function updateScore(isCorrect, selectedSections) {
+        function updateScore(isCorrect, correctSections) {
             totalQuestions++;
             if (isCorrect) {
                 scoreCorrect++;
                 correctAnswers.push(currentItem);
+                correctSound.play().catch(err => console.warn('Correct sound playback failed:', err));
             } else {
-                incorrectAnswers.push({ item: currentItem, correctSections });
+                incorrectAnswers.push({ item: currentItem, correctSections: correctSections });
+                incorrectSound.play().catch(err => console.warn('Incorrect sound playback failed:', err));
             }
             scoreDiv.textContent = `Score: ${scoreCorrect} / ${totalQuestions}`;
         }
 
         cups.forEach(cup => {
-            cup.addEventListener('mouseenter', () => {
-                if (!cup.classList.contains('selected') && !cup.classList.contains('disappear')) {
-                    cup.classList.add('hovered');
-                }
-            });
-
-            cup.addEventListener('mouseleave', () => {
-                cup.classList.remove('hovered');
-            });
-
             cup.addEventListener('click', () => {
+                if (cup.style.pointerEvents === 'none') return;
                 const selectedSections = [];
                 if (currentItem.multiple) {
                     cup.classList.toggle('selected');
@@ -763,44 +963,40 @@
                     selectedSections.push(cup.dataset.section);
                 }
 
-                // Check correctness
-                const correctSections = currentItem.sections;
-                const isCorrect = selectedSections.length === correctSections.length &&
-                    selectedSections.every(section => correctSections.includes(section)) &&
-                    correctSections.every(section => selectedSections.includes(section));
+                const correctSections = currentItem.sections || [];
+                let isCorrect;
+                if (currentItem.multiple) {
+                    isCorrect = selectedSections.some(section => correctSections.includes(section));
+                } else {
+                    isCorrect = selectedSections.length === 1 && correctSections.includes(selectedSections[0]);
+                }
 
-                // Handle reveal images
                 cups.forEach(c => {
                     const revealImage = c.nextElementSibling;
                     if (c.classList.contains('selected')) {
                         revealImage.style.opacity = '1';
                         c.style.pointerEvents = 'none';
                     }
-                    if (!isCorrect && currentItem.sections.includes(c.dataset.section) && !c.classList.contains('selected')) {
-                        c.classList.add('disappear');
-                        revealImage.style.opacity = '1';
-                        c.style.pointerEvents = 'none';
-                    }
                 });
 
-                // Update feedback and score
-                if (isCorrect) {
-                    feedbackDiv.textContent = 'Correct!';
-                    feedbackDiv.className = 'feedback correct';
-                    updateScore(true, selectedSections);
-                    cups.forEach(cup => cup.style.pointerEvents = 'none');
-                    setTimeout(setNewQuestion, 1000); // Proceed after 1 second
-                } else {
-                    feedbackDiv.textContent = `Incorrect. Correct answer: ${correctSections.join(', ')}`;
-                    feedbackDiv.className = 'feedback incorrect';
-                    updateScore(false, correctSections);
-                    cups.forEach(cup => cup.style.pointerEvents = 'none');
-                    setTimeout(setNewQuestion, 1000); // Show images for 1 second, then next question
+                if (!isCorrect) {
+                    let correctCupRevealed = false;
+                    cups.forEach(c => {
+                        if (!correctCupRevealed && correctSections.includes(c.dataset.section) && !c.classList.contains('selected')) {
+                            c.classList.add('disappear');
+                            c.nextElementSibling.style.opacity = '1';
+                            c.style.pointerEvents = 'none';
+                            correctCupRevealed = true;
+                        }
+                    });
                 }
+
+                updateScore(isCorrect, correctSections);
+                cups.forEach(cup => cup.style.pointerEvents = 'none');
+                setTimeout(setNewQuestion, isCorrect ? 1000 : 1500);
             });
         });
 
-        // Start the game
         setNewQuestion();
     </script>
 </body>
