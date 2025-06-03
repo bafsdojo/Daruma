@@ -316,7 +316,7 @@
             color: black;
             font-size: 1rem;
             font-weight: bold;
-            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
             text-align: center;
             width: 100%;
         }
@@ -763,6 +763,10 @@
         const correctSound = document.getElementById('correct');
         const incorrectSound = document.getElementById('incorrect');
 
+        // Set audio volumes
+        backgroundMusic.volume = 0.4; // 40% of default volume
+        correctSound.volume = 1.0; // Double volume (max)
+
         // Copy icon click handlers
         async function copyToClipboard(text, feedbackElement) {
             feedbackElement.style.display = 'block';
@@ -938,7 +942,9 @@
                 correctSound.play().catch(err => console.warn('Correct sound playback failed:', err));
             } else {
                 incorrectAnswers.push({ item: currentItem, correctSections: correctSections });
-                incorrectSound.play().catch(err => console.warn('Incorrect sound playback failed:', err));
+                setTimeout(() => {
+                    incorrectSound.play().catch(err => console.warn('Incorrect sound playback failed:', err));
+                }, 200); // 0.2-second delay
             }
             scoreDiv.textContent = `Score: ${scoreCorrect} / ${totalQuestions}`;
         }
