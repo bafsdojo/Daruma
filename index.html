@@ -4,15 +4,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>BAFS Dojo</title>
-    <link href="https://fonts.googleapis.com/css2?family=Bai+Jamjuree:wght@400;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Bai+Jamjuree:wght@400;600&family=Noto+Sans+TC:wght@400;700&display=swap" rel="stylesheet">
     <style>
         body {
-            font-family: 'Bai Jamjuree', sans-serif;
+            font-family: 'Bai Jamjuree', 'Noto Sans TC', sans-serif;
             text-align: center;
             background-color: #f3ecd9;
             margin: 0;
             min-height: 100vh;
             position: relative;
+            overscroll-behavior: none;
         }
         .start-page {
             display: flex;
@@ -74,29 +75,30 @@
         #chapter-selection-modal .chapter-options {
             display: flex;
             flex-direction: column;
-            align-items: flex-start;
+            align-items: center;
             margin-bottom: 1.5rem;
         }
         #chapter-selection-modal .chapter-option {
-            display: flex;
-            align-items: center;
+            width: 100%;
+            max-width: 300px;
+            padding: 0.5rem;
             margin-bottom: 0.5rem;
+            background-color: #ffffff;
+            color: #000000;
+            border-radius: 5px;
+            cursor: pointer;
+            text-align: center;
             font-size: 1rem;
-            color: #fff;
+            transition: background-color 0.3s ease, color 0.3s ease;
         }
-        #chapter-selection-modal .chapter-option input {
-            margin-right: 0.5rem;
-            width: 20px;
-            height: 20px;
-            cursor: pointer;
-        }
-        #chapter-selection-modal .chapter-option label {
-            cursor: pointer;
+        #chapter-selection-modal .chapter-option.selected {
+            background-color: #ff6902;
+            color: #ffffff;
         }
         #chapter-selection-modal .ownership-options {
             display: none;
             flex-direction: column;
-            align-items: flex-start;
+            align-items: center;
             margin-bottom: 1.5rem;
         }
         #chapter-selection-modal .ownership-options h3 {
@@ -104,29 +106,25 @@
             margin-bottom: 0.5rem;
             color: #fff;
         }
-        #chapter-selection-modal .ownership-option {
+        #chapter-selection-modal .ownership-selection {
             display: flex;
-            align-items: center;
-            margin-bottom: 0.5rem;
+            justify-content: center;
+            gap: 1rem;
+        }
+        #chapter-selection-modal .ownership-option {
+            width: 150px;
+            padding: 0.5rem;
+            background-color: #ffffff;
+            color: #ff6902;
+            border-radius: 5px;
+            cursor: pointer;
+            text-align: center;
             font-size: 1rem;
-            color: #fff;
+            transition: background-color 0.3s ease, color 0.3s ease;
         }
-        #chapter-selection-modal .ownership-option input {
-            appearance: none;
-            width: 20px;
-            height: 20px;
-            border: 2px solid #fff;
-            border-radius: 50%;
-            margin-right: 0.5rem;
-            cursor: pointer;
-            background-color: #fff;
-        }
-        #chapter-selection-modal .ownership-option input:checked {
-            background-color: #00c4cc;
-            border-color: #00c4cc;
-        }
-        #chapter-selection-modal .ownership-option label {
-            cursor: pointer;
+        #chapter-selection-modal .ownership-option.selected {
+            background-color: #ff6902;
+            color: #ffffff;
         }
         #chapter-selection-modal .try-luck-button {
             padding: 0.5rem 1rem;
@@ -181,6 +179,7 @@
             margin: 0 auto;
             display: flex;
             justify-content: center;
+            gap: 5px;
             margin-top: 10px;
         }
         #correct-answers, #wrong-answers {
@@ -190,12 +189,6 @@
             font-size: 0.9em;
             flex: 1;
             position: relative;
-        }
-        #correct-answers {
-            margin-right: 5px;
-        }
-        #wrong-answers {
-            margin-left: 5px;
         }
         #correct-answers h3, #wrong-answers h3 {
             margin: 0 0 5px;
@@ -211,6 +204,7 @@
         }
         #correct-answers li, #wrong-answers li {
             margin: 3px 0;
+            font-size: 0.9em;
         }
         #correct-answers ul {
             list-style-position: outside;
@@ -254,7 +248,7 @@
             background-color: #a53210;
         }
         .end-message {
-            font-family: 'Bai Jamjuree', sans-serif;
+            font-family: 'Bai Jamjuree', 'Noto Sans TC', sans-serif;
             font-size: 1.5em;
             color: #e68434;
             text-align: center;
@@ -281,7 +275,10 @@
             margin-bottom: 1rem;
         }
         .row.income-statement {
-            justify-content: center; /* Center-align cups in the first row */
+            justify-content: center;
+        }
+        .row.income-statement.partnership-mode .cup-container {
+            margin: 0.75rem;
         }
         .cup-container {
             position: relative;
@@ -348,9 +345,12 @@
             color: #333;
             margin-top: 0.5rem;
             text-align: center;
+            width: 100%;
         }
         .section-label.appropriation {
-            white-space: nowrap; /* Prevent line break for "P&L - Appropriation" */
+            white-space: normal;
+            font-size: 0.8rem;
+            line-height: 1.2;
         }
         .score-wrapper, .question-wrapper {
             display: block;
@@ -486,20 +486,16 @@
             }
             #chapter-selection-modal .chapter-option {
                 font-size: 0.9rem;
-            }
-            #chapter-selection-modal .chapter-option input {
-                width: 18px;
-                height: 18px;
+                padding: 0.4rem;
+                max-width: 250px;
             }
             #chapter-selection-modal .ownership-options h3 {
                 font-size: 1rem;
             }
             #chapter-selection-modal .ownership-option {
                 font-size: 0.9rem;
-            }
-            #chapter-selection-modal .ownership-option input {
-                width: 18px;
-                height: 18px;
+                width: 120px;
+                padding: 0.4rem;
             }
             .game-content {
                 padding: 0.5rem;
@@ -507,24 +503,28 @@
                 cursor: url('https://i.postimg.cc/56XXW9WM/hand-cursor.png') 6 6, pointer;
             }
             .result-page {
-                padding-bottom: 90px; /* Reserve space for logo and button */
+                padding-bottom: 90px;
             }
             #results-container {
                 flex-direction: column;
+                max-width: 300px;
             }
             #correct-answers, #wrong-answers {
                 margin: 0 0 10px 0;
                 width: 100%;
-                height: 115px; /* 8 lines for correct */
+                height: 115px;
                 overflow-y: auto;
             }
             #wrong-answers {
-                height: 187px; /* 13 lines for incorrect */
+                height: 187px;
             }
             .cup-container {
                 width: 54px;
                 height: 54px;
-                margin: 0.2rem;
+                margin: 0.3rem;
+            }
+            .row.income-statement.partnership-mode .cup-container {
+                margin: 0.5rem;
             }
             .cup {
                 width: 54px;
@@ -538,6 +538,10 @@
             }
             .section-label {
                 font-size: 0.7rem;
+            }
+            .section-label.appropriation {
+                font-size: 0.6rem;
+                line-height: 1.1;
             }
             .score {
                 font-size: 0.9rem;
@@ -590,20 +594,16 @@
             }
             #chapter-selection-modal .chapter-option {
                 font-size: 0.8rem;
-            }
-            #chapter-selection-modal .chapter-option input {
-                width: 16px;
-                height: 16px;
+                padding: 0.3rem;
+                max-width: 200px;
             }
             #chapter-selection-modal .ownership-options h3 {
                 font-size: 0.9rem;
             }
             #chapter-selection-modal .ownership-option {
                 font-size: 0.8rem;
-            }
-            #chapter-selection-modal .ownership-option input {
-                width: 16px;
-                height: 16px;
+                width: 100px;
+                padding: 0.3rem;
             }
             .game-content {
                 cursor: url('https://i.postimg.cc/56XXW9WM/hand-cursor.png') 5 5, pointer;
@@ -611,7 +611,10 @@
             .cup-container {
                 width: 42px;
                 height: 42px;
-                margin: 0.1rem;
+                margin: 0.2rem;
+            }
+            .row.income-statement.partnership-mode .cup-container {
+                margin: 0.4rem;
             }
             .cup {
                 width: 42px;
@@ -626,7 +629,7 @@
                 font-size: 0.6rem;
             }
             .section-label.appropriation {
-                font-size: 0.5rem; /* Smaller font for "P&L - Appropriation" */
+                font-size: 0.5rem;
             }
             .name-tag-container.tag1 {
                 width: 180px;
@@ -663,41 +666,20 @@
 
     <div id="chapter-selection-modal">
         <div class="modal-content">
-            <h2>What Chapters have you Learned?</h2>
+            <h2>What Chapters<br>have you Learned?</h2>
             <div class="chapter-options">
-                <div class="chapter-option">
-                    <input type="checkbox" id="chp9" checked>
-                    <label for="chp9">Chp.9 Accruals and Prepayments</label>
-                </div>
-                <div class="chapter-option">
-                    <input type="checkbox" id="chp10" checked>
-                    <label for="chp10">Chp.10 Bad Debts and Allowance for Doubtful Accounts</label>
-                </div>
-                <div class="chapter-option">
-                    <input type="checkbox" id="chp11" checked>
-                    <label for="chp11">Chp.11 Depreciation</label>
-                </div>
-                <div class="chapter-option">
-                    <input type="checkbox" id="chp12" checked>
-                    <label for="chp12">Chp.12 Inventory</label>
-                </div>
-                <div class="chapter-option">
-                    <input type="checkbox" id="chp13" checked>
-                    <label for="chp13">Chp.13 Partnership</label>
-                </div>
+                <div class="chapter-option selected" data-chapter="Chp9">Chp.9 Accruals and Prepayments</div>
+                <div class="chapter-option selected" data-chapter="Chp10">Chp.10 Bad Debts and Allowance for Doubtful Accounts</div>
+                <div class="chapter-option selected" data-chapter="Chp11">Chp.11 Depreciation</div>
+                <div class="chapter-option selected" data-chapter="Chp12">Chp.12 Inventory</div>
+                <div class="chapter-option selected" data-chapter="Chp13">Chp.13 Partnership</div>
             </div>
             <div class="ownership-options" id="ownership-options">
-                <h3>Which form of ownership would you like to practise?</h3>
-                <form id="ownership-form">
-                    <div class="ownership-option">
-                        <input type="radio" id="sole" name="ownership" value="sole">
-                        <label for="sole">Sole Proprietorship</label>
-                    </div>
-                    <div class="ownership-option">
-                        <input type="radio" id="partnership" name="ownership" value="partnership" checked>
-                        <label for="partnership">Partnership</label>
-                    </div>
-                </form>
+                <h3>Which form of ownership<br>would you like to practise?</h3>
+                <div class="ownership-selection">
+                    <div class="ownership-option" data-ownership="sole">Sole Proprietorship</div>
+                    <div class="ownership-option selected" data-ownership="partnership">Partnership</div>
+                </div>
             </div>
             <button class="try-luck-button">Try my luck!</button>
         </div>
@@ -705,10 +687,10 @@
 
     <div id="instruction-modal">
         <div class="modal-content">
-            <p>Welcome to BAFS DOJO!<br>
+            <p id="instruction-text">Welcome to BAFS DOJO!<br>
             Apart from skill, <br> LUCK also plays a crucial role<br> in turning dreams into reality.<br><br>
             Classify accounting items into the <br> correct sections in Financial Statements.<br>
-            Flip the right cups to find <br><strong><u>all Darumas</u></strong>!<br><br>
+            Flip the right cups to find <br><strong><u>all <span id="total-questions">0</span> Darumas</u></strong>!<br><br>
             Practice makes perfect!<br>
             May LUCK be your faithful companion <br>on every journey you embark on.</p>
             <button id="continue-button">Continue</button>
@@ -748,7 +730,6 @@
                 <img class="reveal-image" src="" alt="reveal">
                 <div class="section-label">P&L - <br> Other Expenses</div>
             </div>
-            <!-- P&L - Appropriation cup added dynamically if Chp.13 and Partnership -->
         </div>
         <div class="spacer-row"></div>
         <div class="spacer-row"></div>
@@ -869,11 +850,9 @@
             { name: "Motor expenses", soleSections: ["P&L - Other Expenses"], partnershipSections: ["P&L - Other Expenses"], chapters: [] },
             { name: "Motor repairs", soleSections: ["P&L - Other Expenses"], partnershipSections: ["P&L - Other Expenses"], chapters: [] },
             { name: "Motor vehicles", soleSections: ["NCA"], partnershipSections: ["NCA"], chapters: [] },
-            { name: "Net loss (in sole proprietorship)", soleSections: ["C"], partnershipSections: [], chapters: [] },
-            { name: "Net profit (in sole proprietorship)", soleSections: ["C"], partnershipSections: [], chapters: [] },
-            { name: "New capital contribution (in sole proprietorship)", soleSections: ["C"], partnershipSections: [], chapters: [] },
-            { name: "Net loss (in partnership)", soleSections: [], partnershipSections: ["P&L - Appropriation"], chapters: ["Chp13"] },
-            { name: "Net profit (in partnership)", soleSections: [], partnershipSections: ["P&L - Appropriation"], chapters: ["Chp13"] },
+            { name: "Net loss", soleSections: ["C"], partnershipSections: ["P&L - Appropriation"], chapters: ["Chp13"] },
+            { name: "Net profit", soleSections: ["C"], partnershipSections: ["P&L - Appropriation"], chapters: ["Chp13"] },
+            { name: "New capital contribution", soleSections: ["C"], partnershipSections: [], chapters: [] },
             { name: "Office equipment", soleSections: ["NCA"], partnershipSections: ["NCA"], chapters: [] },
             { name: "Other payables", soleSections: ["CL"], partnershipSections: ["CL"], chapters: [] },
             { name: "Other receivables", soleSections: ["CA"], partnershipSections: ["CA"], chapters: [] },
@@ -908,13 +887,8 @@
             { name: "Utilities", soleSections: ["P&L - Other Expenses"], partnershipSections: ["P&L - Other Expenses"], chapters: [] },
             { name: "Wages and salaries", soleSections: ["P&L - Other Expenses"], partnershipSections: ["P&L - Other Expenses"], chapters: [] },
             { name: "Water", soleSections: ["P&L - Other Expenses"], partnershipSections: ["P&L - Other Expenses"], chapters: [] },
-            { name: "Sundry expenses", soleSections: ["P&L - Other Expenses"], partnershipSections: ["P&L - Other Expenses"], chapters: [] },
-            { name: "Office expenses", soleSections: ["P&L - Other Expenses"], partnershipSections: ["P&L - Other Expenses"], chapters: [] },
-            { name: "Miscellaneous expenses", soleSections: ["P&L - Other Expenses"], partnershipSections: ["P&L - Other Expenses"], chapters: [] },
             { name: "Term deposit", soleSections: ["CA"], partnershipSections: ["CA"], chapters: [] },
             { name: "Gain on disposal of [NCA]", soleSections: ["P&L - Other Income"], partnershipSections: ["P&L - Other Income"], chapters: ["Chp11"] },
-            { name: "Net profit", soleSections: [], partnershipSections: ["P&L - Appropriation"], chapters: ["Chp13"] },
-            { name: "Net loss", soleSections: [], partnershipSections: ["P&L - Appropriation"], chapters: ["Chp13"] },
             { name: "Interest on drawings", soleSections: [], partnershipSections: ["P&L - Appropriation"], chapters: ["Chp13"] },
             { name: "Interest on capital", soleSections: [], partnershipSections: ["P&L - Appropriation"], chapters: ["Chp13"] },
             { name: "Partner’s salary", soleSections: [], partnershipSections: ["P&L - Appropriation"], chapters: ["Chp13"] },
@@ -942,6 +916,7 @@
         let totalQuestions = 0;
         let correctAnswers = [];
         let incorrectAnswers = [];
+        let totalQuestionCount = 0;
         const cups = document.querySelectorAll('.cup');
         const questionDiv = document.getElementById('question');
         const feedbackDiv = document.getElementById('feedback');
@@ -971,13 +946,13 @@
         const correctSound = document.getElementById('correct');
         const incorrectSound = document.getElementById('incorrect');
         const incomeStatementRow = document.getElementById('income-statement-row');
-        const chp13Checkbox = document.getElementById('chp13');
+        const totalQuestionsSpan = document.getElementById('total-questions');
         const ownershipOptions = document.getElementById('ownership-options');
-        const ownershipForm = document.getElementById('ownership-form');
 
         // Set audio volumes
-        backgroundMusic.volume = 0.4; // 40% of default volume
-        correctSound.volume = 1.0; // Double volume (max)
+        backgroundMusic.volume = 0.4;
+        correctSound.volume = 1.0;
+        incorrectSound.volume = 1.0;
 
         // Load saved chapter and ownership selections or set defaults
         let chapterSelections = JSON.parse(localStorage.getItem('chapterSelections')) || {
@@ -989,33 +964,54 @@
         };
         let ownershipSelection = localStorage.getItem('ownershipSelection') || 'partnership';
 
-        function updateChapterCheckboxes() {
-            document.getElementById('chp9').checked = chapterSelections.Chp9;
-            document.getElementById('chp10').checked = chapterSelections.Chp10;
-            document.getElementById('chp11').checked = chapterSelections.Chp11;
-            document.getElementById('chp12').checked = chapterSelections.Chp12;
-            document.getElementById('chp13').checked = chapterSelections.Chp13;
+        function updateChapterSelections() {
+            const options = document.querySelectorAll('.chapter-option');
+            options.forEach(option => {
+                const chapter = option.dataset.chapter;
+                option.classList.toggle('selected', chapterSelections[chapter]);
+            });
             ownershipOptions.style.display = chapterSelections.Chp13 ? 'flex' : 'none';
-            document.getElementById('sole').checked = ownershipSelection === 'sole';
-            document.getElementById('partnership').checked = ownershipSelection === 'partnership';
+            updateOwnershipSelection();
+            if (!chapterSelections.Chp13) {
+                ownershipSelection = 'sole';
+            }
+        }
+
+        function updateOwnershipSelection() {
+            const options = document.querySelectorAll('.ownership-option');
+            options.forEach(option => {
+                const ownership = option.dataset.ownership;
+                option.classList.toggle('selected', ownership === ownershipSelection);
+            });
         }
 
         // Apply saved selections on page load
-        updateChapterCheckboxes();
+        updateChapterSelections();
 
-        // Toggle ownership options visibility
-        chp13Checkbox.addEventListener('change', () => {
-            ownershipOptions.style.display = chp13Checkbox.checked ? 'flex' : 'none';
+        // Chapter selection toggle
+        document.querySelectorAll('.chapter-option').forEach(option => {
+            option.addEventListener('click', () => {
+                const chapter = option.dataset.chapter;
+                chapterSelections[chapter] = !chapterSelections[chapter];
+                updateChapterSelections();
+            });
+        });
+
+        // Ownership selection toggle
+        document.querySelectorAll('.ownership-option').forEach(option => {
+            option.addEventListener('click', () => {
+                ownershipSelection = option.dataset.ownership;
+                updateOwnershipSelection();
+            });
         });
 
         function updateIncomeStatementRow() {
-            // Remove any existing P&L - Appropriation cup
             const existingAppropriation = document.querySelector('[data-section="P&L - Appropriation"]');
             if (existingAppropriation) {
                 existingAppropriation.parentElement.remove();
             }
+            incomeStatementRow.classList.toggle('partnership-mode', chapterSelections.Chp13 && ownershipSelection === 'partnership');
 
-            // Add P&L - Appropriation cup if Chp.13 is selected and ownership is Partnership
             if (chapterSelections.Chp13 && ownershipSelection === 'partnership') {
                 const cupContainer = document.createElement('div');
                 cupContainer.className = 'cup-container';
@@ -1026,13 +1022,11 @@
                 `;
                 incomeStatementRow.appendChild(cupContainer);
 
-                // Add click event listener to the new cup
                 const newCup = cupContainer.querySelector('.cup');
                 newCup.addEventListener('click', handleCupClick);
             }
         }
 
-        // Common click handler for cups
         function handleCupClick() {
             if (this.style.pointerEvents === 'none') return;
             const selectedSections = [];
@@ -1083,7 +1077,6 @@
             setTimeout(setNewQuestion, isCorrect ? 1000 : 1500);
         }
 
-        // Copy icon click handlers
         async function copyToClipboard(text, feedbackElement) {
             feedbackElement.style.display = 'block';
             setTimeout(() => {
@@ -1129,30 +1122,32 @@
             copyToClipboard(text, copyCorrectFeedback);
         });
 
-        // Start button click handler to show chapter selection modal
+        // Start button click handler
         startButton.addEventListener('click', () => {
+            console.log('Start button clicked');
             startPage.style.display = 'none';
             chapterSelectionModal.style.display = 'flex';
         });
 
-        // Try my luck button click handler to save selections and show instruction modal
         tryLuckButton.addEventListener('click', () => {
-            chapterSelections = {
-                Chp9: document.getElementById('chp9').checked,
-                Chp10: document.getElementById('chp10').checked,
-                Chp11: document.getElementById('chp11').checked,
-                Chp12: document.getElementById('chp12').checked,
-                Chp13: document.getElementById('chp13').checked
-            };
-            ownershipSelection = ownershipForm.querySelector('input[name="ownership"]:checked').value;
             localStorage.setItem('chapterSelections', JSON.stringify(chapterSelections));
             localStorage.setItem('ownershipSelection', ownershipSelection);
+
+            const selectedChapters = Object.keys(chapterSelections).filter(chp => chapterSelections[chp]);
+            totalQuestionCount = originalItems.filter(item => {
+                if (item.chapters.length > 0 && !item.chapters.some(chp => selectedChapters.includes(chp))) {
+                    return false;
+                }
+                const sections = ownershipSelection === 'sole' ? item.soleSections : item.partnershipSections;
+                return sections.length > 0;
+            }).length;
+
+            totalQuestionsSpan.textContent = totalQuestionCount;
             updateIncomeStatementRow();
             chapterSelectionModal.style.display = 'none';
             instructionModal.style.display = 'flex';
         });
 
-        // Continue button click handler to show game content and start background music
         continueButton.addEventListener('click', () => {
             instructionModal.style.display = 'none';
             gameContent.style.display = 'block';
@@ -1160,7 +1155,6 @@
             setNewQuestion();
         });
 
-        // Back button click handler to return to start page
         backButton.addEventListener('click', () => {
             resultPage.style.display = 'none';
             startPage.style.display = 'flex';
@@ -1171,6 +1165,7 @@
             correctAnswers = [];
             incorrectAnswers = [];
             scoreDiv.textContent = `Score: 0 / 0`;
+            totalQuestionsSpan.textContent = '0';
             feedbackDiv.textContent = '';
             items = [...originalItems];
             correctAnswersList.innerHTML = '';
@@ -1179,10 +1174,9 @@
             resultScore.textContent = '';
             backgroundMusic.pause();
             backgroundMusic.currentTime = 0;
-            updateChapterCheckboxes(); // Restore last selections
+            updateChapterSelections();
         });
 
-        // End button click handler to show result page
         endButton.addEventListener('click', () => {
             feedbackDiv.textContent = 'Game Over!';
             document.querySelectorAll('.cup').forEach(cup => {
@@ -1202,7 +1196,7 @@
             resultsContainer.style.display = 'flex';
             resultScore.textContent = `Score: ${scoreCorrect} / ${totalQuestions}`;
             const percentage = totalQuestions > 0 ? (scoreCorrect / totalQuestions * 100) : 0;
-            if (percentage === 100 && scoreCorrect === items.length) {
+            if (percentage === 100 && scoreCorrect === totalQuestionCount) {
                 endMessage.textContent = "Congrats! You are the luckiest man on earth! 🙇🏻‍♂️";
             } else if (percentage === 100 || percentage >= 90) {
                 endMessage.textContent = "You possess almost all the Forces in the universe!";
@@ -1243,30 +1237,24 @@
         }
 
         function setNewQuestion() {
-            // Filter items based on selected chapters and ownership
             const selectedChapters = Object.keys(chapterSelections).filter(chp => chapterSelections[chp]);
             let filteredItems = originalItems.filter(item => {
-                // Chapter filter: item must have no chapter requirement or match a selected chapter
                 if (item.chapters.length > 0 && !item.chapters.some(chp => selectedChapters.includes(chp))) {
                     return false;
                 }
-                // Ownership filter: item must have sections for the chosen ownership
                 const sections = ownershipSelection === 'sole' ? item.soleSections : item.partnershipSections;
-                return sections.length > 0; // Exclude items with "N.A." (empty sections)
+                return sections.length > 0;
             });
 
-            // Prioritize items based on selected chapters
             filteredItems.sort((a, b) => {
                 const isChp11And13 = chapterSelections.Chp11 && chapterSelections.Chp13;
                 if (isChp11And13) {
-                    // Prioritize Chp.13, then Chp.11 in first 50 items
                     const aIsChp13 = a.chapters.includes('Chp13') ? -2 : 0;
                     const bIsChp13 = b.chapters.includes('Chp13') ? -2 : 0;
                     const aIsChp11 = a.chapters.includes('Chp11') ? -1 : 0;
                     const bIsChp11 = b.chapters.includes('Chp11') ? -1 : 0;
                     return (aIsChp13 + aIsChp11) - (bIsChp13 + bIsChp11);
                 } else {
-                    // Prioritize Chp.11 in first 30, others in first 15
                     const aIsChp11 = a.chapters.includes('Chp11') ? -2 : 0;
                     const bIsChp11 = b.chapters.includes('Chp11') ? -2 : 0;
                     const aIsOtherChapter = a.chapters.some(chp => ['Chp9', 'Chp10', 'Chp12'].includes(chp) && selectedChapters.includes(chp)) ? -1 : 0;
@@ -1275,23 +1263,21 @@
                 }
             });
 
-            // Apply limits based on prioritization
             if (chapterSelections.Chp11 && chapterSelections.Chp13) {
-                filteredItems = filteredItems.slice(0, 50); // First 50 for Chp.11 and Chp.13
+                filteredItems = filteredItems.slice(0, 50);
             } else if (chapterSelections.Chp11) {
-                filteredItems = filteredItems.slice(0, 30); // First 30 for Chp.11
+                filteredItems = filteredItems.slice(0, 30);
             } else if (selectedChapters.some(chp => ['Chp9', 'Chp10', 'Chp12'].includes(chp))) {
-                filteredItems = filteredItems.slice(0, 15); // First 15 for other chapters
+                filteredItems = filteredItems.slice(0, 15);
             }
 
-            // If Chp.13 and Partnership, re-prioritize Chp.13 within the filtered set
             if (chapterSelections.Chp13 && ownershipSelection === 'partnership') {
                 filteredItems.sort((a, b) => {
                     const aIsChp13 = a.chapters.includes('Chp13') ? -1 : 1;
                     const bIsChp13 = b.chapters.includes('Chp13') ? -1 : 1;
                     return aIsChp13 - bIsChp13;
                 });
-                filteredItems = filteredItems.slice(0, 50); // Ensure Chp.13 priority
+                filteredItems = filteredItems.slice(0, 50);
             }
 
             items = filteredItems.map(item => ({
@@ -1341,7 +1327,7 @@
                 incorrectAnswers.push({ item: currentItem, correctSections: correctSections });
                 setTimeout(() => {
                     incorrectSound.play().catch(err => console.warn('Incorrect sound playback failed:', err));
-                }, 200); // 0.2-second delay
+                }, 200);
             }
             scoreDiv.textContent = `Score: ${scoreCorrect} / ${totalQuestions}`;
         }
