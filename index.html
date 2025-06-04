@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>May the Force be with You</title>
+    <title>BAFS Dojo</title>
     <link href="https://fonts.googleapis.com/css2?family=Bai+Jamjuree:wght@400;600&display=swap" rel="stylesheet">
     <style>
         body {
@@ -44,6 +44,103 @@
         }
         .start-button:hover {
             transform: scale(1.1);
+        }
+        #chapter-selection-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 20;
+            justify-content: center;
+            align-items: center;
+        }
+        #chapter-selection-modal .modal-content {
+            background-color: #c93c13;
+            color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            max-width: 80%;
+            text-align: center;
+            font-size: 1em;
+            line-height: 1.5;
+        }
+        #chapter-selection-modal .modal-content h2 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+        }
+        #chapter-selection-modal .chapter-options {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            margin-bottom: 1.5rem;
+        }
+        #chapter-selection-modal .chapter-option {
+            display: flex;
+            align-items: center;
+            margin-bottom: 0.5rem;
+            font-size: 1rem;
+            color: #fff;
+        }
+        #chapter-selection-modal .chapter-option input {
+            margin-right: 0.5rem;
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+        }
+        #chapter-selection-modal .chapter-option label {
+            cursor: pointer;
+        }
+        #chapter-selection-modal .ownership-options {
+            display: none;
+            flex-direction: column;
+            align-items: flex-start;
+            margin-bottom: 1.5rem;
+        }
+        #chapter-selection-modal .ownership-options h3 {
+            font-size: 1.2rem;
+            margin-bottom: 0.5rem;
+            color: #fff;
+        }
+        #chapter-selection-modal .ownership-option {
+            display: flex;
+            align-items: center;
+            margin-bottom: 0.5rem;
+            font-size: 1rem;
+            color: #fff;
+        }
+        #chapter-selection-modal .ownership-option input {
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border: 2px solid #fff;
+            border-radius: 50%;
+            margin-right: 0.5rem;
+            cursor: pointer;
+            background-color: #fff;
+        }
+        #chapter-selection-modal .ownership-option input:checked {
+            background-color: #00c4cc;
+            border-color: #00c4cc;
+        }
+        #chapter-selection-modal .ownership-option label {
+            cursor: pointer;
+        }
+        #chapter-selection-modal .try-luck-button {
+            padding: 0.5rem 1rem;
+            background-color: #f3ecdc;
+            color: #c93c13;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: bold;
+            transition: background-color 0.3s ease;
+        }
+        #chapter-selection-modal .try-luck-button:hover {
+            background-color: #e0d9c8;
         }
         .game-content {
             display: none;
@@ -183,6 +280,9 @@
             flex-wrap: wrap;
             margin-bottom: 1rem;
         }
+        .row.income-statement {
+            justify-content: center; /* Center-align cups in the first row */
+        }
         .cup-container {
             position: relative;
             width: 144px;
@@ -248,6 +348,9 @@
             color: #333;
             margin-top: 0.5rem;
             text-align: center;
+        }
+        .section-label.appropriation {
+            white-space: nowrap; /* Prevent line break for "P&L - Appropriation" */
         }
         .score-wrapper, .question-wrapper {
             display: block;
@@ -378,6 +481,26 @@
                 width: 40px;
                 height: 40px;
             }
+            #chapter-selection-modal .modal-content h2 {
+                font-size: 1.3rem;
+            }
+            #chapter-selection-modal .chapter-option {
+                font-size: 0.9rem;
+            }
+            #chapter-selection-modal .chapter-option input {
+                width: 18px;
+                height: 18px;
+            }
+            #chapter-selection-modal .ownership-options h3 {
+                font-size: 1rem;
+            }
+            #chapter-selection-modal .ownership-option {
+                font-size: 0.9rem;
+            }
+            #chapter-selection-modal .ownership-option input {
+                width: 18px;
+                height: 18px;
+            }
             .game-content {
                 padding: 0.5rem;
                 padding-bottom: 2rem;
@@ -457,10 +580,30 @@
             }
         }
         @media (max-width: 360px) {
-            #instruction-modal .modal-content {
+            #instruction-modal .modal-content, #chapter-selection-modal .modal-content {
                 max-width: 90%;
                 padding: 15px;
                 font-size: 0.9em;
+            }
+            #chapter-selection-modal .modal-content h2 {
+                font-size: 1.2rem;
+            }
+            #chapter-selection-modal .chapter-option {
+                font-size: 0.8rem;
+            }
+            #chapter-selection-modal .chapter-option input {
+                width: 16px;
+                height: 16px;
+            }
+            #chapter-selection-modal .ownership-options h3 {
+                font-size: 0.9rem;
+            }
+            #chapter-selection-modal .ownership-option {
+                font-size: 0.8rem;
+            }
+            #chapter-selection-modal .ownership-option input {
+                width: 16px;
+                height: 16px;
             }
             .game-content {
                 cursor: url('https://i.postimg.cc/56XXW9WM/hand-cursor.png') 5 5, pointer;
@@ -481,6 +624,9 @@
             }
             .section-label {
                 font-size: 0.6rem;
+            }
+            .section-label.appropriation {
+                font-size: 0.5rem; /* Smaller font for "P&L - Appropriation" */
             }
             .name-tag-container.tag1 {
                 width: 180px;
@@ -515,12 +661,54 @@
         <source src="shatter_effect.mp3" type="audio/mpeg">
     </audio>
 
+    <div id="chapter-selection-modal">
+        <div class="modal-content">
+            <h2>What Chapters have you Learned?</h2>
+            <div class="chapter-options">
+                <div class="chapter-option">
+                    <input type="checkbox" id="chp9" checked>
+                    <label for="chp9">Chp.9 Accruals and Prepayments</label>
+                </div>
+                <div class="chapter-option">
+                    <input type="checkbox" id="chp10" checked>
+                    <label for="chp10">Chp.10 Bad Debts and Allowance for Doubtful Accounts</label>
+                </div>
+                <div class="chapter-option">
+                    <input type="checkbox" id="chp11" checked>
+                    <label for="chp11">Chp.11 Depreciation</label>
+                </div>
+                <div class="chapter-option">
+                    <input type="checkbox" id="chp12" checked>
+                    <label for="chp12">Chp.12 Inventory</label>
+                </div>
+                <div class="chapter-option">
+                    <input type="checkbox" id="chp13" checked>
+                    <label for="chp13">Chp.13 Partnership</label>
+                </div>
+            </div>
+            <div class="ownership-options" id="ownership-options">
+                <h3>Which form of ownership would you like to practise?</h3>
+                <form id="ownership-form">
+                    <div class="ownership-option">
+                        <input type="radio" id="sole" name="ownership" value="sole">
+                        <label for="sole">Sole Proprietorship</label>
+                    </div>
+                    <div class="ownership-option">
+                        <input type="radio" id="partnership" name="ownership" value="partnership" checked>
+                        <label for="partnership">Partnership</label>
+                    </div>
+                </form>
+            </div>
+            <button class="try-luck-button">Try my luck!</button>
+        </div>
+    </div>
+
     <div id="instruction-modal">
         <div class="modal-content">
             <p>Welcome to BAFS DOJO!<br>
             Apart from skill, <br> LUCK also plays a crucial role<br> in turning dreams into reality.<br><br>
             Classify accounting items into the <br> correct sections in Financial Statements.<br>
-            Flip the right cups to find <br><strong><u>all 95 Darumas</u></strong>!<br><br>
+            Flip the right cups to find <br><strong><u>all Darumas</u></strong>!<br><br>
             Practice makes perfect!<br>
             May LUCK be your faithful companion <br>on every journey you embark on.</p>
             <button id="continue-button">Continue</button>
@@ -544,7 +732,7 @@
             <img class="name-tag" src="https://i.postimg.cc/L4NC1CPF/name-tag.png" alt="Name Tag">
             <div class="name-tag-text">Income Statement</div>
         </div>
-        <div class="row">
+        <div class="row income-statement" id="income-statement-row">
             <div class="cup-container">
                 <div class="cup" data-section="Trading"></div>
                 <img class="reveal-image" src="" alt="reveal">
@@ -560,6 +748,7 @@
                 <img class="reveal-image" src="" alt="reveal">
                 <div class="section-label">P&L - <br> Other Expenses</div>
             </div>
+            <!-- P&L - Appropriation cup added dynamically if Chp.13 and Partnership -->
         </div>
         <div class="spacer-row"></div>
         <div class="spacer-row"></div>
@@ -623,104 +812,120 @@
 
     <script>
         const originalItems = [
-            { name: "Abnormal inventory loss", sections: ["Trading", "P&L - Other Expenses"], multiple: true },
-            { name: "Accrued expenses", sections: ["CL"] },
-            { name: "Accrued income", sections: ["CA"] },
-            { name: "Accumulated Depreciation – [NCA]", sections: ["NCA"] },
-            { name: "Administrative expenses", sections: ["P&L - Other Expenses"] },
-            { name: "Advertising", sections: ["P&L - Other Expenses"] },
-            { name: "Allowance for doubtful accounts / debts", sections: ["CA"] },
-            { name: "Bad debts", sections: ["P&L - Other Expenses"] },
-            { name: "Bank", sections: ["CA"] },
-            { name: "Bank charges", sections: ["P&L - Other Expenses"] },
-            { name: "Bank interest income", sections: ["P&L - Other Income"] },
-            { name: "Bank loan", sections: ["NCL"] },
-            { name: "Bank overdraft", sections: ["CL"] },
-            { name: "Buildings", sections: ["NCA"] },
-            { name: "Capital", sections: ["C"] },
-            { name: "Carriage inwards", sections: ["Trading"] },
-            { name: "Carriage outwards", sections: ["P&L - Other Expenses"] },
-            { name: "Cash", sections: ["CA"] },
-            { name: "Cleaning", sections: ["P&L - Other Expenses"] },
-            { name: "Commissions expenses", sections: ["P&L - Other Expenses"] },
-            { name: "Commissions income", sections: ["P&L - Other Income"] },
-            { name: "Decrease in bad debts", sections: ["P&L - Other Income"] },
-            { name: "Deposit from customers (refundable)", sections: ["CL"] },
-            { name: "Deposit to suppliers (refundable)", sections: ["CA"] },
-            { name: "Depreciation – [NCA]", sections: ["P&L - Other Expenses"] },
-            { name: "Discounts allowed", sections: ["P&L - Other Expenses"] },
-            { name: "Discounts received", sections: ["P&L - Other Income"] },
-            { name: "Drawings", sections: ["C"] },
-            { name: "Electricity", sections: ["P&L - Other Expenses"] },
-            { name: "Fixed deposit", sections: ["CA"] },
-            { name: "Fixtures and fittings", sections: ["NCA"] },
-            { name: "General / Sundry / Office / Miscellaneous expenses", sections: ["P&L - Other Expenses"] },
-            { name: "Heating and lighting", sections: ["P&L - Other Expenses"] },
-            { name: "Insurance", sections: ["P&L - Other Expenses"] },
-            { name: "Insurance compensation receivables", sections: ["CA"] },
-            { name: "Interest on deposit", sections: ["P&L - Other Income"] },
-            { name: "Interest on [loan from A]", sections: ["P&L - Other Expenses"] },
-            { name: "Interest on [loan to B]", sections: ["P&L - Other Income"] },
-            { name: "Interest on overdraft", sections: ["P&L - Other Expenses"] },
-            { name: "Internet charges", sections: ["P&L - Other Expenses"] },
-            { name: "Inventory, as at year start", sections: ["Trading"] },
-            { name: "Inventory, as at year end", sections: ["Trading", "CA"], multiple: true },
-            { name: "Land", sections: ["NCA"] },
-            { name: "Loan from C", sections: ["NCL"] },
-            { name: "Loan to D", sections: ["NCA"] },
-            { name: "Loan interest expenses", sections: ["P&L - Other Expenses"] },
-            { name: "Long-term investments", sections: ["NCA"] },
-            { name: "Loss on disposal of [NCA]", sections: ["P&L - Other Expenses"] },
-            { name: "Machinery", sections: ["NCA"] },
-            { name: "Management fees", sections: ["P&L - Other Expenses"] },
-            { name: "Motor expenses", sections: ["P&L - Other Expenses"] },
-            { name: "Motor repairs", sections: ["P&L - Other Expenses"] },
-            { name: "Motor vehicles", sections: ["NCA"] },
-            { name: "Net loss", sections: ["C"] },
-            { name: "Net profit", sections: ["C"] },
-            { name: "New capital contribution", sections: ["C"] },
-            { name: "Office equipment", sections: ["NCA"] },
-            { name: "Other payables", sections: ["CL"] },
-            { name: "Other receivables", sections: ["CA"] },
-            { name: "Postages", sections: ["P&L - Other Expenses"] },
-            { name: "Premises", sections: ["NCA"] },
-            { name: "Prepaid expenses", sections: ["CA"] },
-            { name: "Printing and stationery", sections: ["P&L - Other Expenses"] },
-            { name: "Profit on disposal of [NCA]", sections: ["P&L - Other Income"] },
-            { name: "Purchases", sections: ["Trading"] },
-            { name: "Purchases returns", sections: ["Trading"] },
-            { name: "Rent and rates", sections: ["P&L - Other Expenses"] },
-            { name: "Rental deposit from tenants", sections: ["CL"] },
-            { name: "Rental deposit to landlords", sections: ["CA"] },
-            { name: "Rental income", sections: ["P&L - Other Income"] },
-            { name: "Repairs and maintenance", sections: ["P&L - Other Expenses"] },
-            { name: "Returns inwards", sections: ["Trading"] },
-            { name: "Returns outwards", sections: ["Trading"] },
-            { name: "Revenue", sections: ["Trading"] },
-            { name: "Revenue returns", sections: ["Trading"] },
-            { name: "Sales", sections: ["Trading"] },
-            { name: "Sales returns", sections: ["Trading"] },
-            { name: "Selling and distribution costs", sections: ["P&L - Other Expenses"] },
-            { name: "Short-term investments", sections: ["CA"] },
-            { name: "Staff welfare and entertainment", sections: ["P&L - Other Expenses"] },
-            { name: "Telecommunications", sections: ["P&L - Other Expenses"] },
-            { name: "Telephone", sections: ["P&L - Other Expenses"] },
-            { name: "Time deposit", sections: ["CA"] },
-            { name: "Trade payables", sections: ["CL"] },
-            { name: "Trade receivables", sections: ["CA"] },
-            { name: "Travelling", sections: ["P&L - Other Expenses"] },
-            { name: "Unearned income", sections: ["CL"] },
-            { name: "Utilities", sections: ["P&L - Other Expenses"] },
-            { name: "Wages and salaries", sections: ["P&L - Other Expenses"] },
-            { name: "Water", sections: ["P&L - Other Expenses"] },
-            { name: "Sundry expenses", sections: ["P&L - Other Expenses"] },
-            { name: "Office expenses", sections: ["P&L - Other Expenses"] },
-            { name: "Miscellaneous expenses", sections: ["P&L - Other Expenses"] },
-            { name: "Term deposit", sections: ["CA"] },
-            { name: "Gain on disposal of [NCA]", sections: ["P&L - Other Income"] }
+            { name: "Abnormal inventory loss", soleSections: ["Trading", "P&L - Other Expenses"], partnershipSections: ["Trading", "P&L - Other Expenses"], chapters: ["Chp12"], multiple: true },
+            { name: "Accrued expenses", soleSections: ["CL"], partnershipSections: ["CL"], chapters: ["Chp9"] },
+            { name: "Accrued income", soleSections: ["CA"], partnershipSections: ["CA"], chapters: ["Chp9"] },
+            { name: "Accumulated Depreciation – [NCA]", soleSections: ["NCA"], partnershipSections: ["NCA"], chapters: ["Chp11"] },
+            { name: "Administrative expenses", soleSections: ["P&L - Other Expenses"], partnershipSections: ["P&L - Other Expenses"], chapters: [] },
+            { name: "Advertising", soleSections: ["P&L - Other Expenses"], partnershipSections: ["P&L - Other Expenses"], chapters: [] },
+            { name: "Allowance for doubtful accounts", soleSections: ["CA"], partnershipSections: ["CA"], chapters: ["Chp10"] },
+            { name: "Allowance for doubtful debts", soleSections: ["CA"], partnershipSections: ["CA"], chapters: ["Chp10"] },
+            { name: "Bad debts", soleSections: ["P&L - Other Expenses"], partnershipSections: ["P&L - Other Expenses"], chapters: ["Chp10"] },
+            { name: "Bank", soleSections: ["CA"], partnershipSections: ["CA"], chapters: [] },
+            { name: "Bank charges", soleSections: ["P&L - Other Expenses"], partnershipSections: ["P&L - Other Expenses"], chapters: [] },
+            { name: "Bank interest income", soleSections: ["P&L - Other Income"], partnershipSections: ["P&L - Other Income"], chapters: [] },
+            { name: "Bank loan", soleSections: ["NCL"], partnershipSections: ["NCL"], chapters: [] },
+            { name: "Bank overdraft", soleSections: ["CL"], partnershipSections: ["CL"], chapters: [] },
+            { name: "Buildings", soleSections: ["NCA"], partnershipSections: ["NCA"], chapters: [] },
+            { name: "Capital", soleSections: ["C"], partnershipSections: [], chapters: [] },
+            { name: "Carriage inwards", soleSections: ["Trading"], partnershipSections: ["Trading"], chapters: [] },
+            { name: "Carriage outwards", soleSections: ["P&L - Other Expenses"], partnershipSections: ["P&L - Other Expenses"], chapters: [] },
+            { name: "Cash", soleSections: ["CA"], partnershipSections: ["CA"], chapters: [] },
+            { name: "Cleaning", soleSections: ["P&L - Other Expenses"], partnershipSections: ["P&L - Other Expenses"], chapters: [] },
+            { name: "Commissions expenses", soleSections: ["P&L - Other Expenses"], partnershipSections: ["P&L - Other Expenses"], chapters: [] },
+            { name: "Commissions income", soleSections: ["P&L - Other Income"], partnershipSections: ["P&L - Other Income"], chapters: [] },
+            { name: "Decrease in bad debts", soleSections: ["P&L - Other Income"], partnershipSections: ["P&L - Other Income"], chapters: ["Chp10"] },
+            { name: "Deposit from customers (refundable)", soleSections: ["CL"], partnershipSections: ["CL"], chapters: [] },
+            { name: "Deposit to suppliers (refundable)", soleSections: ["CA"], partnershipSections: ["CA"], chapters: [] },
+            { name: "Depreciation – [NCA]", soleSections: ["P&L - Other Expenses"], partnershipSections: ["P&L - Other Expenses"], chapters: ["Chp11"] },
+            { name: "Discounts allowed", soleSections: ["P&L - Other Expenses"], partnershipSections: ["P&L - Other Expenses"], chapters: [] },
+            { name: "Discounts received", soleSections: ["P&L - Other Income"], partnershipSections: ["P&L - Other Income"], chapters: [] },
+            { name: "Drawings", soleSections: ["C"], partnershipSections: ["C"], chapters: [] },
+            { name: "Electricity", soleSections: ["P&L - Other Expenses"], partnershipSections: ["P&L - Other Expenses"], chapters: [] },
+            { name: "Fixed deposit", soleSections: ["CA"], partnershipSections: ["CA"], chapters: [] },
+            { name: "Fixtures and fittings", soleSections: ["NCA"], partnershipSections: ["NCA"], chapters: [] },
+            { name: "General expenses", soleSections: ["P&L - Other Expenses"], partnershipSections: ["P&L - Other Expenses"], chapters: [] },
+            { name: "Sundry expenses", soleSections: ["P&L - Other Expenses"], partnershipSections: ["P&L - Other Expenses"], chapters: [] },
+            { name: "Office expenses", soleSections: ["P&L - Other Expenses"], partnershipSections: ["P&L - Other Expenses"], chapters: [] },
+            { name: "Miscellaneous expenses", soleSections: ["P&L - Other Expenses"], partnershipSections: ["P&L - Other Expenses"], chapters: [] },
+            { name: "Heating and lighting", soleSections: ["P&L - Other Expenses"], partnershipSections: ["P&L - Other Expenses"], chapters: [] },
+            { name: "Insurance", soleSections: ["P&L - Other Expenses"], partnershipSections: ["P&L - Other Expenses"], chapters: [] },
+            { name: "Insurance compensation receivables", soleSections: ["CA"], partnershipSections: ["CA"], chapters: ["Chp11", "Chp12"] },
+            { name: "Interest on deposit", soleSections: ["P&L - Other Income"], partnershipSections: ["P&L - Other Income"], chapters: [] },
+            { name: "Interest on [loan from A]", soleSections: ["P&L - Other Expenses"], partnershipSections: ["P&L - Other Expenses"], chapters: [] },
+            { name: "Interest on [loan to B]", soleSections: ["P&L - Other Income"], partnershipSections: ["P&L - Other Income"], chapters: [] },
+            { name: "Interest on overdraft", soleSections: ["P&L - Other Expenses"], partnershipSections: ["P&L - Other Expenses"], chapters: [] },
+            { name: "Internet charges", soleSections: ["P&L - Other Expenses"], partnershipSections: ["P&L - Other Expenses"], chapters: [] },
+            { name: "Inventory, as at year start", soleSections: ["Trading"], partnershipSections: ["Trading"], chapters: [] },
+            { name: "Inventory, as at year end", soleSections: ["Trading", "CA"], partnershipSections: ["Trading", "CA"], chapters: [], multiple: true },
+            { name: "Land", soleSections: ["NCA"], partnershipSections: ["NCA"], chapters: [] },
+            { name: "Loan from C", soleSections: ["NCL"], partnershipSections: ["NCL"], chapters: [] },
+            { name: "Loan to D", soleSections: ["NCA"], partnershipSections: ["NCA"], chapters: [] },
+            { name: "Loan interest expenses", soleSections: ["P&L - Other Expenses"], partnershipSections: ["P&L - Other Expenses"], chapters: [] },
+            { name: "Long-term investments", soleSections: ["NCA"], partnershipSections: ["NCA"], chapters: [] },
+            { name: "Loss on disposal of [NCA]", soleSections: ["P&L - Other Expenses"], partnershipSections: ["P&L - Other Expenses"], chapters: ["Chp11"] },
+            { name: "Machinery", soleSections: ["NCA"], partnershipSections: ["NCA"], chapters: [] },
+            { name: "Management fees", soleSections: ["P&L - Other Expenses"], partnershipSections: ["P&L - Other Expenses"], chapters: [] },
+            { name: "Motor expenses", soleSections: ["P&L - Other Expenses"], partnershipSections: ["P&L - Other Expenses"], chapters: [] },
+            { name: "Motor repairs", soleSections: ["P&L - Other Expenses"], partnershipSections: ["P&L - Other Expenses"], chapters: [] },
+            { name: "Motor vehicles", soleSections: ["NCA"], partnershipSections: ["NCA"], chapters: [] },
+            { name: "Net loss (in sole proprietorship)", soleSections: ["C"], partnershipSections: [], chapters: [] },
+            { name: "Net profit (in sole proprietorship)", soleSections: ["C"], partnershipSections: [], chapters: [] },
+            { name: "New capital contribution (in sole proprietorship)", soleSections: ["C"], partnershipSections: [], chapters: [] },
+            { name: "Net loss (in partnership)", soleSections: [], partnershipSections: ["P&L - Appropriation"], chapters: ["Chp13"] },
+            { name: "Net profit (in partnership)", soleSections: [], partnershipSections: ["P&L - Appropriation"], chapters: ["Chp13"] },
+            { name: "Office equipment", soleSections: ["NCA"], partnershipSections: ["NCA"], chapters: [] },
+            { name: "Other payables", soleSections: ["CL"], partnershipSections: ["CL"], chapters: [] },
+            { name: "Other receivables", soleSections: ["CA"], partnershipSections: ["CA"], chapters: [] },
+            { name: "Postages", soleSections: ["P&L - Other Expenses"], partnershipSections: ["P&L - Other Expenses"], chapters: [] },
+            { name: "Premises", soleSections: ["NCA"], partnershipSections: ["NCA"], chapters: [] },
+            { name: "Prepaid expenses", soleSections: ["CA"], partnershipSections: ["CA"], chapters: ["Chp9"] },
+            { name: "Printing and stationery", soleSections: ["P&L - Other Expenses"], partnershipSections: ["P&L - Other Expenses"], chapters: [] },
+            { name: "Profit on disposal of [NCA]", soleSections: ["P&L - Other Income"], partnershipSections: ["P&L - Other Income"], chapters: ["Chp11"] },
+            { name: "Purchases", soleSections: ["Trading"], partnershipSections: ["Trading"], chapters: [] },
+            { name: "Purchases returns", soleSections: ["Trading"], partnershipSections: ["Trading"], chapters: [] },
+            { name: "Rent and rates", soleSections: ["P&L - Other Expenses"], partnershipSections: ["P&L - Other Expenses"], chapters: [] },
+            { name: "Rental deposit from tenants", soleSections: ["CL"], partnershipSections: ["CL"], chapters: [] },
+            { name: "Rental deposit to landlords", soleSections: ["CA"], partnershipSections: ["CA"], chapters: [] },
+            { name: "Rental income", soleSections: ["P&L - Other Income"], partnershipSections: ["P&L - Other Income"], chapters: [] },
+            { name: "Repairs and maintenance", soleSections: ["P&L - Other Expenses"], partnershipSections: ["P&L - Other Expenses"], chapters: [] },
+            { name: "Returns inwards", soleSections: ["Trading"], partnershipSections: ["Trading"], chapters: [] },
+            { name: "Returns outwards", soleSections: ["Trading"], partnershipSections: ["Trading"], chapters: [] },
+            { name: "Revenue", soleSections: ["Trading"], partnershipSections: ["Trading"], chapters: [] },
+            { name: "Revenue returns", soleSections: ["Trading"], partnershipSections: ["Trading"], chapters: [] },
+            { name: "Sales", soleSections: ["Trading"], partnershipSections: ["Trading"], chapters: [] },
+            { name: "Sales returns", soleSections: ["Trading"], partnershipSections: ["Trading"], chapters: [] },
+            { name: "Selling and distribution costs", soleSections: ["P&L - Other Expenses"], partnershipSections: ["P&L - Other Expenses"], chapters: [] },
+            { name: "Short-term investments", soleSections: ["CA"], partnershipSections: ["CA"], chapters: [] },
+            { name: "Staff welfare and entertainment", soleSections: ["P&L - Other Expenses"], partnershipSections: ["P&L - Other Expenses"], chapters: [] },
+            { name: "Telecommunications", soleSections: ["P&L - Other Expenses"], partnershipSections: ["P&L - Other Expenses"], chapters: [] },
+            { name: "Telephone", soleSections: ["P&L - Other Expenses"], partnershipSections: ["P&L - Other Expenses"], chapters: [] },
+            { name: "Time deposit", soleSections: ["CA"], partnershipSections: ["CA"], chapters: [] },
+            { name: "Trade payables", soleSections: ["CL"], partnershipSections: ["CL"], chapters: [] },
+            { name: "Trade receivables", soleSections: ["CA"], partnershipSections: ["CA"], chapters: [] },
+            { name: "Travelling", soleSections: ["P&L - Other Expenses"], partnershipSections: ["P&L - Other Expenses"], chapters: [] },
+            { name: "Unearned income", soleSections: ["CL"], partnershipSections: ["CL"], chapters: ["Chp9"] },
+            { name: "Utilities", soleSections: ["P&L - Other Expenses"], partnershipSections: ["P&L - Other Expenses"], chapters: [] },
+            { name: "Wages and salaries", soleSections: ["P&L - Other Expenses"], partnershipSections: ["P&L - Other Expenses"], chapters: [] },
+            { name: "Water", soleSections: ["P&L - Other Expenses"], partnershipSections: ["P&L - Other Expenses"], chapters: [] },
+            { name: "Sundry expenses", soleSections: ["P&L - Other Expenses"], partnershipSections: ["P&L - Other Expenses"], chapters: [] },
+            { name: "Office expenses", soleSections: ["P&L - Other Expenses"], partnershipSections: ["P&L - Other Expenses"], chapters: [] },
+            { name: "Miscellaneous expenses", soleSections: ["P&L - Other Expenses"], partnershipSections: ["P&L - Other Expenses"], chapters: [] },
+            { name: "Term deposit", soleSections: ["CA"], partnershipSections: ["CA"], chapters: [] },
+            { name: "Gain on disposal of [NCA]", soleSections: ["P&L - Other Income"], partnershipSections: ["P&L - Other Income"], chapters: ["Chp11"] },
+            { name: "Net profit", soleSections: [], partnershipSections: ["P&L - Appropriation"], chapters: ["Chp13"] },
+            { name: "Net loss", soleSections: [], partnershipSections: ["P&L - Appropriation"], chapters: ["Chp13"] },
+            { name: "Interest on drawings", soleSections: [], partnershipSections: ["P&L - Appropriation"], chapters: ["Chp13"] },
+            { name: "Interest on capital", soleSections: [], partnershipSections: ["P&L - Appropriation"], chapters: ["Chp13"] },
+            { name: "Partner’s salary", soleSections: [], partnershipSections: ["P&L - Appropriation"], chapters: ["Chp13"] },
+            { name: "Share of profit", soleSections: [], partnershipSections: ["P&L - Appropriation"], chapters: ["Chp13"] },
+            { name: "Share of loss", soleSections: [], partnershipSections: ["P&L - Appropriation"], chapters: ["Chp13"] },
+            { name: "Capital – [Partner]", soleSections: [], partnershipSections: ["C"], chapters: ["Chp13"] },
+            { name: "Current – [Partner]", soleSections: [], partnershipSections: ["C"], chapters: ["Chp13"] },
+            { name: "Loan from Partner", soleSections: [], partnershipSections: ["NCL"], chapters: ["Chp13"] },
+            { name: "Interest on [loan from Partner]", soleSections: [], partnershipSections: ["P&L - Other Expenses"], chapters: ["Chp13"] }
         ];
 
-        let items = [...originalItems];
         const darumaImages = [
             'https://i.postimg.cc/cC6cmTND/daruma.png',
             'https://i.postimg.cc/8F4hd5jd/daruma-black.png',
@@ -731,6 +936,7 @@
             'https://i.postimg.cc/YjZQzTqP/daruma-yellow.png'
         ];
 
+        let items = [...originalItems];
         let currentItem;
         let scoreCorrect = 0;
         let totalQuestions = 0;
@@ -741,9 +947,11 @@
         const feedbackDiv = document.getElementById('feedback');
         const scoreDiv = document.getElementById('score');
         const startPage = document.querySelector('.start-page');
+        const chapterSelectionModal = document.getElementById('chapter-selection-modal');
         const gameContent = document.querySelector('.game-content');
         const resultPage = document.querySelector('.result-page');
         const startButton = document.querySelector('.start-button');
+        const tryLuckButton = document.querySelector('.try-luck-button');
         const endButton = document.querySelector('.end-button');
         const instructionModal = document.getElementById('instruction-modal');
         const continueButton = document.getElementById('continue-button');
@@ -762,10 +970,118 @@
         const backgroundMusic = document.getElementById('background-music');
         const correctSound = document.getElementById('correct');
         const incorrectSound = document.getElementById('incorrect');
+        const incomeStatementRow = document.getElementById('income-statement-row');
+        const chp13Checkbox = document.getElementById('chp13');
+        const ownershipOptions = document.getElementById('ownership-options');
+        const ownershipForm = document.getElementById('ownership-form');
 
         // Set audio volumes
         backgroundMusic.volume = 0.4; // 40% of default volume
         correctSound.volume = 1.0; // Double volume (max)
+
+        // Load saved chapter and ownership selections or set defaults
+        let chapterSelections = JSON.parse(localStorage.getItem('chapterSelections')) || {
+            Chp9: true,
+            Chp10: true,
+            Chp11: true,
+            Chp12: true,
+            Chp13: true
+        };
+        let ownershipSelection = localStorage.getItem('ownershipSelection') || 'partnership';
+
+        function updateChapterCheckboxes() {
+            document.getElementById('chp9').checked = chapterSelections.Chp9;
+            document.getElementById('chp10').checked = chapterSelections.Chp10;
+            document.getElementById('chp11').checked = chapterSelections.Chp11;
+            document.getElementById('chp12').checked = chapterSelections.Chp12;
+            document.getElementById('chp13').checked = chapterSelections.Chp13;
+            ownershipOptions.style.display = chapterSelections.Chp13 ? 'flex' : 'none';
+            document.getElementById('sole').checked = ownershipSelection === 'sole';
+            document.getElementById('partnership').checked = ownershipSelection === 'partnership';
+        }
+
+        // Apply saved selections on page load
+        updateChapterCheckboxes();
+
+        // Toggle ownership options visibility
+        chp13Checkbox.addEventListener('change', () => {
+            ownershipOptions.style.display = chp13Checkbox.checked ? 'flex' : 'none';
+        });
+
+        function updateIncomeStatementRow() {
+            // Remove any existing P&L - Appropriation cup
+            const existingAppropriation = document.querySelector('[data-section="P&L - Appropriation"]');
+            if (existingAppropriation) {
+                existingAppropriation.parentElement.remove();
+            }
+
+            // Add P&L - Appropriation cup if Chp.13 is selected and ownership is Partnership
+            if (chapterSelections.Chp13 && ownershipSelection === 'partnership') {
+                const cupContainer = document.createElement('div');
+                cupContainer.className = 'cup-container';
+                cupContainer.innerHTML = `
+                    <div class="cup" data-section="P&L - Appropriation"></div>
+                    <img class="reveal-image" src="" alt="reveal">
+                    <div class="section-label appropriation">P&L - <br> Appropriation</div>
+                `;
+                incomeStatementRow.appendChild(cupContainer);
+
+                // Add click event listener to the new cup
+                const newCup = cupContainer.querySelector('.cup');
+                newCup.addEventListener('click', handleCupClick);
+            }
+        }
+
+        // Common click handler for cups
+        function handleCupClick() {
+            if (this.style.pointerEvents === 'none') return;
+            const selectedSections = [];
+            if (currentItem.multiple) {
+                this.classList.toggle('selected');
+                selectedSections.push(...Array.from(document.querySelectorAll('.cup'))
+                    .filter(c => c.classList.contains('selected'))
+                    .map(c => c.dataset.section));
+            } else {
+                document.querySelectorAll('.cup').forEach(c => {
+                    c.classList.remove('selected');
+                    c.classList.remove('disappear');
+                });
+                this.classList.add('selected');
+                selectedSections.push(this.dataset.section);
+            }
+
+            const correctSections = currentItem.sections || [];
+            let isCorrect;
+            if (currentItem.multiple) {
+                isCorrect = selectedSections.some(section => correctSections.includes(section));
+            } else {
+                isCorrect = selectedSections.length === 1 && correctSections.includes(selectedSections[0]);
+            }
+
+            document.querySelectorAll('.cup').forEach(c => {
+                const revealImage = c.nextElementSibling;
+                if (c.classList.contains('selected')) {
+                    revealImage.style.opacity = '1';
+                    c.style.pointerEvents = 'none';
+                }
+            });
+
+            if (!isCorrect) {
+                let correctCupRevealed = false;
+                document.querySelectorAll('.cup').forEach(c => {
+                    if (!correctCupRevealed && correctSections.includes(c.dataset.section) && !c.classList.contains('selected')) {
+                        c.classList.add('disappear');
+                        c.nextElementSibling.style.opacity = '1';
+                        c.style.pointerEvents = 'none';
+                        correctCupRevealed = true;
+                    }
+                });
+            }
+
+            updateScore(isCorrect, correctSections);
+            document.querySelectorAll('.cup').forEach(cup => cup.style.pointerEvents = 'none');
+            setTimeout(setNewQuestion, isCorrect ? 1000 : 1500);
+        }
 
         // Copy icon click handlers
         async function copyToClipboard(text, feedbackElement) {
@@ -783,7 +1099,6 @@
                 }
             }
 
-            // Fallback for non-secure contexts or older browsers
             const textarea = document.createElement('textarea');
             textarea.value = text;
             textarea.style.position = 'fixed';
@@ -814,17 +1129,35 @@
             copyToClipboard(text, copyCorrectFeedback);
         });
 
-        // Start button click handler to show modal
+        // Start button click handler to show chapter selection modal
         startButton.addEventListener('click', () => {
+            startPage.style.display = 'none';
+            chapterSelectionModal.style.display = 'flex';
+        });
+
+        // Try my luck button click handler to save selections and show instruction modal
+        tryLuckButton.addEventListener('click', () => {
+            chapterSelections = {
+                Chp9: document.getElementById('chp9').checked,
+                Chp10: document.getElementById('chp10').checked,
+                Chp11: document.getElementById('chp11').checked,
+                Chp12: document.getElementById('chp12').checked,
+                Chp13: document.getElementById('chp13').checked
+            };
+            ownershipSelection = ownershipForm.querySelector('input[name="ownership"]:checked').value;
+            localStorage.setItem('chapterSelections', JSON.stringify(chapterSelections));
+            localStorage.setItem('ownershipSelection', ownershipSelection);
+            updateIncomeStatementRow();
+            chapterSelectionModal.style.display = 'none';
             instructionModal.style.display = 'flex';
         });
 
         // Continue button click handler to show game content and start background music
         continueButton.addEventListener('click', () => {
             instructionModal.style.display = 'none';
-            startPage.style.display = 'none';
             gameContent.style.display = 'block';
             backgroundMusic.play().catch(err => console.warn('Background music playback failed:', err));
+            setNewQuestion();
         });
 
         // Back button click handler to return to start page
@@ -846,13 +1179,13 @@
             resultScore.textContent = '';
             backgroundMusic.pause();
             backgroundMusic.currentTime = 0;
-            setNewQuestion();
+            updateChapterCheckboxes(); // Restore last selections
         });
 
         // End button click handler to show result page
         endButton.addEventListener('click', () => {
             feedbackDiv.textContent = 'Game Over!';
-            cups.forEach(cup => {
+            document.querySelectorAll('.cup').forEach(cup => {
                 cup.classList.add('disappear');
                 cup.style.pointerEvents = 'none';
                 const revealImage = cup.nextElementSibling;
@@ -869,7 +1202,7 @@
             resultsContainer.style.display = 'flex';
             resultScore.textContent = `Score: ${scoreCorrect} / ${totalQuestions}`;
             const percentage = totalQuestions > 0 ? (scoreCorrect / totalQuestions * 100) : 0;
-            if (percentage === 100 && scoreCorrect === originalItems.length) {
+            if (percentage === 100 && scoreCorrect === items.length) {
                 endMessage.textContent = "Congrats! You are the luckiest man on earth! 🙇🏻‍♂️";
             } else if (percentage === 100 || percentage >= 90) {
                 endMessage.textContent = "You possess almost all the Forces in the universe!";
@@ -901,25 +1234,89 @@
             backgroundMusic.currentTime = 0;
         });
 
-        function getRandomItem() {
-            if (items.length === 0) return null;
-            const index = Math.floor(Math.random() * items.length);
-            const item = items[index];
-            items.splice(index, 1);
+        function getRandomItem(filteredItems) {
+            if (filteredItems.length === 0) return null;
+            const index = Math.floor(Math.random() * filteredItems.length);
+            const item = filteredItems[index];
+            filteredItems.splice(index, 1);
             return item;
         }
 
         function setNewQuestion() {
-            currentItem = getRandomItem();
+            // Filter items based on selected chapters and ownership
+            const selectedChapters = Object.keys(chapterSelections).filter(chp => chapterSelections[chp]);
+            let filteredItems = originalItems.filter(item => {
+                // Chapter filter: item must have no chapter requirement or match a selected chapter
+                if (item.chapters.length > 0 && !item.chapters.some(chp => selectedChapters.includes(chp))) {
+                    return false;
+                }
+                // Ownership filter: item must have sections for the chosen ownership
+                const sections = ownershipSelection === 'sole' ? item.soleSections : item.partnershipSections;
+                return sections.length > 0; // Exclude items with "N.A." (empty sections)
+            });
+
+            // Prioritize items based on selected chapters
+            filteredItems.sort((a, b) => {
+                const isChp11And13 = chapterSelections.Chp11 && chapterSelections.Chp13;
+                if (isChp11And13) {
+                    // Prioritize Chp.13, then Chp.11 in first 50 items
+                    const aIsChp13 = a.chapters.includes('Chp13') ? -2 : 0;
+                    const bIsChp13 = b.chapters.includes('Chp13') ? -2 : 0;
+                    const aIsChp11 = a.chapters.includes('Chp11') ? -1 : 0;
+                    const bIsChp11 = b.chapters.includes('Chp11') ? -1 : 0;
+                    return (aIsChp13 + aIsChp11) - (bIsChp13 + bIsChp11);
+                } else {
+                    // Prioritize Chp.11 in first 30, others in first 15
+                    const aIsChp11 = a.chapters.includes('Chp11') ? -2 : 0;
+                    const bIsChp11 = b.chapters.includes('Chp11') ? -2 : 0;
+                    const aIsOtherChapter = a.chapters.some(chp => ['Chp9', 'Chp10', 'Chp12'].includes(chp) && selectedChapters.includes(chp)) ? -1 : 0;
+                    const bIsOtherChapter = b.chapters.some(chp => ['Chp9', 'Chp10', 'Chp12'].includes(chp) && selectedChapters.includes(chp)) ? -1 : 0;
+                    return (aIsChp11 + aIsOtherChapter) - (bIsChp11 + bIsOtherChapter);
+                }
+            });
+
+            // Apply limits based on prioritization
+            if (chapterSelections.Chp11 && chapterSelections.Chp13) {
+                filteredItems = filteredItems.slice(0, 50); // First 50 for Chp.11 and Chp.13
+            } else if (chapterSelections.Chp11) {
+                filteredItems = filteredItems.slice(0, 30); // First 30 for Chp.11
+            } else if (selectedChapters.some(chp => ['Chp9', 'Chp10', 'Chp12'].includes(chp))) {
+                filteredItems = filteredItems.slice(0, 15); // First 15 for other chapters
+            }
+
+            // If Chp.13 and Partnership, re-prioritize Chp.13 within the filtered set
+            if (chapterSelections.Chp13 && ownershipSelection === 'partnership') {
+                filteredItems.sort((a, b) => {
+                    const aIsChp13 = a.chapters.includes('Chp13') ? -1 : 1;
+                    const bIsChp13 = b.chapters.includes('Chp13') ? -1 : 1;
+                    return aIsChp13 - bIsChp13;
+                });
+                filteredItems = filteredItems.slice(0, 50); // Ensure Chp.13 priority
+            }
+
+            items = filteredItems.map(item => ({
+                ...item,
+                sections: ownershipSelection === 'sole' ? item.soleSections : item.partnershipSections
+            }));
+
+            if (items.length === 0) {
+                questionDiv.textContent = "";
+                feedbackDiv.textContent = "No items available for selected chapters or ownership!";
+                document.querySelectorAll('.cup').forEach(cup => cup.style.pointerEvents = 'none');
+                endButton.style.pointerEvents = 'none';
+                return;
+            }
+
+            currentItem = getRandomItem(items);
             if (!currentItem) {
                 questionDiv.textContent = "";
                 feedbackDiv.textContent = "Game Over!";
-                cups.forEach(cup => cup.style.pointerEvents = 'none');
+                document.querySelectorAll('.cup').forEach(cup => cup.style.pointerEvents = 'none');
                 endButton.style.pointerEvents = 'none';
                 return;
             }
             questionDiv.textContent = currentItem.name;
-            cups.forEach(cup => {
+            document.querySelectorAll('.cup').forEach(cup => {
                 cup.classList.remove('selected');
                 cup.classList.remove('disappear');
                 cup.style.pointerEvents = 'auto';
@@ -949,59 +1346,8 @@
             scoreDiv.textContent = `Score: ${scoreCorrect} / ${totalQuestions}`;
         }
 
-        cups.forEach(cup => {
-            cup.addEventListener('click', () => {
-                if (cup.style.pointerEvents === 'none') return;
-                const selectedSections = [];
-                if (currentItem.multiple) {
-                    cup.classList.toggle('selected');
-                    selectedSections.push(...Array.from(cups)
-                        .filter(c => c.classList.contains('selected'))
-                        .map(c => c.dataset.section));
-                } else {
-                    cups.forEach(c => {
-                        c.classList.remove('selected');
-                        c.classList.remove('disappear');
-                    });
-                    cup.classList.add('selected');
-                    selectedSections.push(cup.dataset.section);
-                }
-
-                const correctSections = currentItem.sections || [];
-                let isCorrect;
-                if (currentItem.multiple) {
-                    isCorrect = selectedSections.some(section => correctSections.includes(section));
-                } else {
-                    isCorrect = selectedSections.length === 1 && correctSections.includes(selectedSections[0]);
-                }
-
-                cups.forEach(c => {
-                    const revealImage = c.nextElementSibling;
-                    if (c.classList.contains('selected')) {
-                        revealImage.style.opacity = '1';
-                        c.style.pointerEvents = 'none';
-                    }
-                });
-
-                if (!isCorrect) {
-                    let correctCupRevealed = false;
-                    cups.forEach(c => {
-                        if (!correctCupRevealed && correctSections.includes(c.dataset.section) && !c.classList.contains('selected')) {
-                            c.classList.add('disappear');
-                            c.nextElementSibling.style.opacity = '1';
-                            c.style.pointerEvents = 'none';
-                            correctCupRevealed = true;
-                        }
-                    });
-                }
-
-                updateScore(isCorrect, correctSections);
-                cups.forEach(cup => cup.style.pointerEvents = 'none');
-                setTimeout(setNewQuestion, isCorrect ? 1000 : 1500);
-            });
-        });
-
-        setNewQuestion();
+        // Initial cup event listeners
+        cups.forEach(cup => cup.addEventListener('click', handleCupClick));
     </script>
 </body>
 </html>
