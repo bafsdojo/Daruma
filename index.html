@@ -1,225 +1,4 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>BAFS Dojo</title>
-    <link href="https://fonts.googleapis.com/css2?family=Bai+Jamjuree:wght@400;600&family=Noto+Sans+TC:wght@400;700&display=swap" rel="stylesheet">
-    <style>
-        body {
-            font-family: 'Bai Jamjuree', 'Noto Sans TC', sans-serif;
-            text-align: center;
-            background-color: #f3ecd9;
-            margin: 0;
-            min-height: 100vh;
-            position: relative;
-            overscroll-behavior: none;
-        }
-        .start-page {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: flex-start;
-            min-height: 100vh;
-            padding-top: 2rem;
-        }
-        .start-page h1 {
-            font-size: 1.8rem;
-            color: #e68434;
-            margin-bottom: 1.5rem;
-        }
-        .start-page .score {
-            font-size: 1rem;
-            background-color: white;
-            padding: 0.5rem 1rem;
-            border-radius: 5px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-            margin-bottom: 2rem;
-            display: inline-block;
-        }
-        .start-button {
-            width: 360px;
-            height: 360px;
-            cursor: pointer;
-            transition: transform 0.3s ease;
-        }
-        .start-button:hover {
-            transform: scale(1.1);
-        }
-        #chapter-selection-modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.5);
-            z-index: 20;
-            justify-content: center;
-            align-items: center;
-        }
-        #chapter-selection-modal .modal-content {
-            background-color: #c93c13;
-            color: #fff;
-            padding: 20px;
-            border-radius: 10px;
-            max-width: 80%;
-            text-align: center;
-            font-size: 1em;
-            line-height: 1.5;
-        }
-        #chapter-selection-modal .modal-content h2 {
-            font-size: 1.5rem;
-            margin-bottom: 1rem;
-        }
-        #chapter-selection-modal .chapter-options {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            margin-bottom: 1.5rem;
-        }
-        #chapter-selection-modal .chapter-option {
-            width: 100%;
-            max-width: 300px;
-            padding: 0.5rem;
-            margin-bottom: 0.5rem;
-            background-color: #ffffff;
-            color: #000000;
-            border-radius: 5px;
-            cursor: pointer;
-            text-align: center;
-            font-size: 1rem;
-            transition: background-color 0.3s ease, color 0.3s ease;
-        }
-        #chapter-selection-modal .chapter-option.selected {
-            background-color: #ff6902;
-            color: #ffffff;
-        }
-        #chapter-selection-modal .ownership-options {
-            display: none;
-            flex-direction: column;
-            align-items: center;
-            margin-bottom: 1.5rem;
-        }
-        #chapter-selection-modal .ownership-options h3 {
-            font-size: 1.2rem;
-            margin-bottom: 0.5rem;
-            color: #fff;
-        }
-        #chapter-selection-modal .ownership-selection {
-            display: flex;
-            justify-content: center;
-            gap: 1rem;
-        }
-        #chapter-selection-modal .ownership-option {
-            width: 150px;
-            padding: 0.5rem;
-            background-color: #ffffff;
-            color: #ff6902;
-            border-radius: 5px;
-            cursor: pointer;
-            text-align: center;
-            font-size: 1rem;
-            transition: background-color 0.3s ease, color 0.3s ease;
-        }
-        #chapter-selection-modal .ownership-option.selected {
-            background-color: #ff6902;
-            color: #ffffff;
-        }
-        #chapter-selection-modal .try-luck-button {
-            padding: 0.5rem 1rem;
-            background-color: #f3ecdc;
-            color: #c93c13;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 1rem;
-            font-weight: bold;
-            transition: background-color 0.3s ease;
-        }
-        #chapter-selection-modal .try-luck-button:hover {
-            background-color: #e0d9c8;
-        }
-        .game-content {
-            display: none;
-            max-width: 90%;
-            margin: 0 auto;
-            padding: 1rem;
-            position: relative;
-            text-align: center;
-            padding-bottom: 2rem;
-            cursor: url('https://i.postimg.cc/56XXW9WM/hand-cursor.png') 16 16, pointer;
-        }
-        .result-page {
-            display: none;
-            max-width: 90%;
-            margin: 0 auto;
-            padding: 1rem;
-            text-align: center;
-        }
-        .result-page h1 {
-            font-size: 1.5em;
-            text-align: center;
-            margin: 10px 0;
-            color: #e68434;
-        }
-        .result-page .score {
-            font-size: 1rem;
-            background-color: white;
-            padding: 0.5rem 1rem;
-            border-radius: 5px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-            margin-bottom: 1rem;
-            display: inline-block;
-        }
-        #results-container {
-            display: none;
-            width: 100%;
-            max-width: 360px;
-            margin: 0 auto;
-            display: flex;
-            justify-content: center;
-            gap: 5px;
-            margin-top: 10px;
-        }
-        #correct-answers, #wrong-answers {
-            background-color: #fff;
-            padding: 10px;
-            border-radius: 5px;
-            font-size: 0.9em;
-            flex: 1;
-            position: relative;
-        }
-        #correct-answers h3, #wrong-answers h3 {
-            margin: 0 0 5px;
-            font-size: 1em;
-            margin-right: 30px;
-            text-align: left;
-        }
-        #correct-answers ul, #wrong-answers ul {
-            list-style-type: decimal;
-            text-align: left;
-            padding-left: 20px;
-            margin: 0;
-        }
-        #correct-answers li, #wrong-answers li {
-            margin: 3px 0;
-            font-size: 0.9em;
-        }
-        #correct-answers ul {
-            list-style-position: outside;
-            margin-left: 0;
-        }
-        #wrong-answers li {
-            margin-bottom: 20px;
-        }
-        #copy-icon, #copy-correct-icon {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            width: 20px;
-            cursor: pointer;
-        }
+
         #copy-feedback, #copy-correct-feedback {
             display: none;
             position: absolute;
@@ -347,11 +126,14 @@
             text-align: center;
             width: 100%;
         }
-        .section-label.appropriation {
-            white-space: normal;
-            font-size: 0.8rem;
-            line-height: 1.2;
-        }
+.section-label.appropriation {
+    font-size: 0.9rem; 
+    line-height: 1.3;  
+    color: #333;       
+    margin-top: 0.5rem; 
+    text-align: center; 
+    width: 100%;       
+}
         .score-wrapper, .question-wrapper {
             display: block;
             text-align: center;
@@ -540,8 +322,7 @@
                 font-size: 0.7rem;
             }
             .section-label.appropriation {
-                font-size: 0.6rem;
-                line-height: 1.1;
+                font-size: 0.5rem;
             }
             .score {
                 font-size: 0.9rem;
@@ -821,7 +602,7 @@
             { name: "Depreciation – [NCA]", soleSections: ["P&L - Other Expenses"], partnershipSections: ["P&L - Other Expenses"], chapters: ["Chp11"] },
             { name: "Discounts allowed", soleSections: ["P&L - Other Expenses"], partnershipSections: ["P&L - Other Expenses"], chapters: [] },
             { name: "Discounts received", soleSections: ["P&L - Other Income"], partnershipSections: ["P&L - Other Income"], chapters: [] },
-            { name: "Drawings", soleSections: ["C"], partnershipSections: ["C"], chapters: [] },
+            { name: "Drawings (in sole proprietorship)", soleSections: ["C"], partnershipSections: [], chapters: [], soleOnly: true },
             { name: "Electricity", soleSections: ["P&L - Other Expenses"], partnershipSections: ["P&L - Other Expenses"], chapters: [] },
             { name: "Fixed deposit", soleSections: ["CA"], partnershipSections: ["CA"], chapters: [] },
             { name: "Fixtures and fittings", soleSections: ["NCA"], partnershipSections: ["NCA"], chapters: [] },
@@ -850,9 +631,11 @@
             { name: "Motor expenses", soleSections: ["P&L - Other Expenses"], partnershipSections: ["P&L - Other Expenses"], chapters: [] },
             { name: "Motor repairs", soleSections: ["P&L - Other Expenses"], partnershipSections: ["P&L - Other Expenses"], chapters: [] },
             { name: "Motor vehicles", soleSections: ["NCA"], partnershipSections: ["NCA"], chapters: [] },
-            { name: "Net loss", soleSections: ["C"], partnershipSections: ["P&L - Appropriation"], chapters: ["Chp13"] },
-            { name: "Net profit", soleSections: ["C"], partnershipSections: ["P&L - Appropriation"], chapters: ["Chp13"] },
-            { name: "New capital contribution", soleSections: ["C"], partnershipSections: [], chapters: [] },
+            { name: "Net loss (in sole proprietorship)", soleSections: ["C"], partnershipSections: [], chapters: [], soleOnly: true },
+            { name: "Net profit (in sole proprietorship)", soleSections: ["C"], partnershipSections: [], chapters: [], soleOnly: true },
+            { name: "New capital contribution (in sole proprietorship)", soleSections: ["C"], partnershipSections: [], chapters: [], soleOnly: true },
+            { name: "Net loss (in partnership)", soleSections: [], partnershipSections: ["P&L - Appropriation"], chapters: ["Chp13"] },
+            { name: "Net profit (in partnership)", soleSections: [], partnershipSections: ["P&L - Appropriation"], chapters: ["Chp13"] },
             { name: "Office equipment", soleSections: ["NCA"], partnershipSections: ["NCA"], chapters: [] },
             { name: "Other payables", soleSections: ["CL"], partnershipSections: ["CL"], chapters: [] },
             { name: "Other receivables", soleSections: ["CA"], partnershipSections: ["CA"], chapters: [] },
@@ -887,6 +670,9 @@
             { name: "Utilities", soleSections: ["P&L - Other Expenses"], partnershipSections: ["P&L - Other Expenses"], chapters: [] },
             { name: "Wages and salaries", soleSections: ["P&L - Other Expenses"], partnershipSections: ["P&L - Other Expenses"], chapters: [] },
             { name: "Water", soleSections: ["P&L - Other Expenses"], partnershipSections: ["P&L - Other Expenses"], chapters: [] },
+            { name: "Sundry expenses (2)", soleSections: ["P&L - Other Expenses"], partnershipSections: ["P&L - Other Expenses"], chapters: [] },
+            { name: "Office expenses (2)", soleSections: ["P&L - Other Expenses"], partnershipSections: ["P&L - Other Expenses"], chapters: [] },
+            { name: "Miscellaneous expenses (2)", soleSections: ["P&L - Other Expenses"], partnershipSections: ["P&L - Other Expenses"], chapters: [] },
             { name: "Term deposit", soleSections: ["CA"], partnershipSections: ["CA"], chapters: [] },
             { name: "Gain on disposal of [NCA]", soleSections: ["P&L - Other Income"], partnershipSections: ["P&L - Other Income"], chapters: ["Chp11"] },
             { name: "Interest on drawings", soleSections: [], partnershipSections: ["P&L - Appropriation"], chapters: ["Chp13"] },
@@ -917,6 +703,7 @@
         let correctAnswers = [];
         let incorrectAnswers = [];
         let totalQuestionCount = 0;
+        let usedItems = new Set();
         const cups = document.querySelectorAll('.cup');
         const questionDiv = document.getElementById('question');
         const feedbackDiv = document.getElementById('feedback');
@@ -1047,30 +834,24 @@
             const correctSections = currentItem.sections || [];
             let isCorrect;
             if (currentItem.multiple) {
-                isCorrect = selectedSections.some(section => correctSections.includes(section));
+                isCorrect = correctSections.every(section => selectedSections.includes(section)) && selectedSections.every(section => correctSections.includes(section));
             } else {
                 isCorrect = selectedSections.length === 1 && correctSections.includes(selectedSections[0]);
             }
 
             document.querySelectorAll('.cup').forEach(c => {
                 const revealImage = c.nextElementSibling;
-                if (c.classList.contains('selected')) {
+                if (correctSections.includes(c.dataset.section)) {
+                    revealImage.src = darumaImages[Math.floor(Math.random() * darumaImages.length)];
+                    revealImage.style.opacity = '1';
+                    c.classList.add(c.classList.contains('selected') ? 'selected' : 'disappear');
+                    c.style.pointerEvents = 'none';
+                } else if (c.classList.contains('selected')) {
+                    revealImage.src = 'https://i.postimg.cc/Wz6s5m6k/monster.png';
                     revealImage.style.opacity = '1';
                     c.style.pointerEvents = 'none';
                 }
             });
-
-            if (!isCorrect) {
-                let correctCupRevealed = false;
-                document.querySelectorAll('.cup').forEach(c => {
-                    if (!correctCupRevealed && correctSections.includes(c.dataset.section) && !c.classList.contains('selected')) {
-                        c.classList.add('disappear');
-                        c.nextElementSibling.style.opacity = '1';
-                        c.style.pointerEvents = 'none';
-                        correctCupRevealed = true;
-                    }
-                });
-            }
 
             updateScore(isCorrect, correctSections);
             document.querySelectorAll('.cup').forEach(cup => cup.style.pointerEvents = 'none');
@@ -1127,6 +908,7 @@
             console.log('Start button clicked');
             startPage.style.display = 'none';
             chapterSelectionModal.style.display = 'flex';
+            usedItems.clear();
         });
 
         tryLuckButton.addEventListener('click', () => {
@@ -1136,6 +918,9 @@
             const selectedChapters = Object.keys(chapterSelections).filter(chp => chapterSelections[chp]);
             totalQuestionCount = originalItems.filter(item => {
                 if (item.chapters.length > 0 && !item.chapters.some(chp => selectedChapters.includes(chp))) {
+                    return false;
+                }
+                if (item.soleOnly && ownershipSelection !== 'sole') {
                     return false;
                 }
                 const sections = ownershipSelection === 'sole' ? item.soleSections : item.partnershipSections;
@@ -1175,6 +960,7 @@
             backgroundMusic.pause();
             backgroundMusic.currentTime = 0;
             updateChapterSelections();
+            usedItems.clear();
         });
 
         endButton.addEventListener('click', () => {
@@ -1229,10 +1015,11 @@
         });
 
         function getRandomItem(filteredItems) {
-            if (filteredItems.length === 0) return null;
-            const index = Math.floor(Math.random() * filteredItems.length);
-            const item = filteredItems[index];
-            filteredItems.splice(index, 1);
+            const availableItems = filteredItems.filter(item => !usedItems.has(item.name));
+            if (availableItems.length === 0) return null;
+            const index = Math.floor(Math.random() * availableItems.length);
+            const item = availableItems[index];
+            usedItems.add(item.name);
             return item;
         }
 
@@ -1240,6 +1027,9 @@
             const selectedChapters = Object.keys(chapterSelections).filter(chp => chapterSelections[chp]);
             let filteredItems = originalItems.filter(item => {
                 if (item.chapters.length > 0 && !item.chapters.some(chp => selectedChapters.includes(chp))) {
+                    return false;
+                }
+                if (item.soleOnly && ownershipSelection !== 'sole') {
                     return false;
                 }
                 const sections = ownershipSelection === 'sole' ? item.soleSections : item.partnershipSections;
@@ -1285,9 +1075,9 @@
                 sections: ownershipSelection === 'sole' ? item.soleSections : item.partnershipSections
             }));
 
-            if (items.length === 0) {
+            if (items.length === 0 || usedItems.size >= items.length) {
                 questionDiv.textContent = "";
-                feedbackDiv.textContent = "No items available for selected chapters or ownership!";
+                feedbackDiv.textContent = "Game Over!";
                 document.querySelectorAll('.cup').forEach(cup => cup.style.pointerEvents = 'none');
                 endButton.style.pointerEvents = 'none';
                 return;
@@ -1322,7 +1112,10 @@
             if (isCorrect) {
                 scoreCorrect++;
                 correctAnswers.push(currentItem);
-                correctSound.play().catch(err => console.warn('Correct sound playback failed:', err));
+                correctSound.play().then(() => {
+                    correctSound.currentTime = 0;
+                    correctSound.play();
+                }).catch(err => console.warn('Correct sound playback failed:', err));
             } else {
                 incorrectAnswers.push({ item: currentItem, correctSections: correctSections });
                 setTimeout(() => {
