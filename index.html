@@ -95,37 +95,6 @@
             background-color: #ff6902;
             color: #ffffff;
         }
-        #chapter-selection-modal .ownership-options {
-            display: none;
-            flex-direction: column;
-            align-items: center;
-            margin-bottom: 1.5rem;
-        }
-        #chapter-selection-modal .ownership-options h3 {
-            font-size: 1.2rem;
-            margin-bottom: 0.5rem;
-            color: #fff;
-        }
-        #chapter-selection-modal .ownership-selection {
-            display: flex;
-            justify-content: center;
-            gap: 1rem;
-        }
-        #chapter-selection-modal .ownership-option {
-            width: 150px;
-            padding: 0.5rem;
-            background-color: #ffffff;
-            color: #ff6902;
-            border-radius: 5px;
-            cursor: pointer;
-            text-align: center;
-            font-size: 1rem;
-            transition: background-color 0.3s ease, color 0.3s ease;
-        }
-        #chapter-selection-modal .ownership-option.selected {
-            background-color: #ff6902;
-            color: #ffffff;
-        }
         #chapter-selection-modal .try-luck-button {
             padding: 0.5rem 1rem;
             background-color: #f3ecdc;
@@ -233,6 +202,21 @@
             border: 1px solid #ccc;
             z-index: 15;
         }
+        .what-else-message {
+            display: none;
+            position: absolute;
+            top: 135px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #fff;
+            color: #333;
+            padding: 5px 10px;
+            border-radius: 3px;
+            font-size: 0.8em;
+            border: 1px solid #ccc;
+            z-index: 15;
+            white-space: nowrap;
+        }
         .result-page .back-button {
             margin-top: 1rem;
             padding: 0.5rem 1rem;
@@ -277,7 +261,7 @@
         .row.income-statement {
             justify-content: center;
         }
-        .row.income-statement.partnership-mode .cup-container {
+        .row.income-statement.chapter13-mode .cup-container {
             margin: 0.75rem;
         }
         .cup-container {
@@ -347,14 +331,14 @@
             text-align: center;
             width: 100%;
         }
-.small-text {
-    font-size: 0.9rem; /* Adjust this to match the font size of "P&L - Other Income" */
-}
-
-.section-label.appropriation {
-    line-height: 1.5; /* Match line height to "P&L - Other Expenses" */
-    font-size: 1rem;  /* Keep the current size for "Appropriation" */
-}        .score-wrapper, .question-wrapper {
+        .small-text {
+            font-size: 0.9rem;
+        }
+        .section-label.appropriation {
+            line-height: 1.5;
+            font-size: 1rem;
+        }
+        .score-wrapper, .question-wrapper {
             display: block;
             text-align: center;
         }
@@ -491,14 +475,6 @@
                 padding: 0.4rem;
                 max-width: 250px;
             }
-            #chapter-selection-modal .ownership-options h3 {
-                font-size: 1rem;
-            }
-            #chapter-selection-modal .ownership-option {
-                font-size: 0.9rem;
-                width: 120px;
-                padding: 0.4rem;
-            }
             .game-content {
                 padding: 0.5rem;
                 padding-bottom: 2rem;
@@ -525,7 +501,7 @@
                 height: 54px;
                 margin: 0.3rem;
             }
-            .row.income-statement.partnership-mode .cup-container {
+            .row.income-statement.chapter13-mode .cup-container {
                 margin: 0.5rem;
             }
             .cup {
@@ -584,6 +560,11 @@
                 font-size: 0.7em;
                 padding: 4px 8px;
             }
+            .what-else-message {
+                top: 45px;
+                font-size: 0.7em;
+                padding: 4px 8px;
+            }
         }
         @media (max-width: 360px) {
             #instruction-modal .modal-content, #chapter-selection-modal .modal-content {
@@ -599,14 +580,6 @@
                 padding: 0.3rem;
                 max-width: 200px;
             }
-            #chapter-selection-modal .ownership-options h3 {
-                font-size: 0.9rem;
-            }
-            #chapter-selection-modal .ownership-option {
-                font-size: 0.8rem;
-                width: 100px;
-                padding: 0.3rem;
-            }
             .game-content {
                 cursor: url('https://i.postimg.cc/56XXW9WM/hand-cursor.png') 5 5, pointer;
             }
@@ -615,7 +588,7 @@
                 height: 42px;
                 margin: 0.2rem;
             }
-            .row.income-statement.partnership-mode .cup-container {
+            .row.income-statement.chapter13-mode .cup-container {
                 margin: 0.4rem;
             }
             .cup {
@@ -651,11 +624,15 @@
             .spacer-row {
                 height: 0.6rem;
             }
+            .what-else-message {
+                top: 35px;
+                font-size: 0.6em;
+                padding: 3px 6px;
+            }
         }
     </style>
 </head>
 <body>
-    <!-- Audio elements for music and sound effects -->
     <audio id="background-music" loop>
         <source src="luckgame_bgm.mp3" type="audio/mpeg">
     </audio>
@@ -675,13 +652,6 @@
                 <div class="chapter-option selected" data-chapter="Chp11">Chp.11 Depreciation</div>
                 <div class="chapter-option selected" data-chapter="Chp12">Chp.12 Inventory</div>
                 <div class="chapter-option selected" data-chapter="Chp13">Chp.13 Partnership</div>
-            </div>
-            <div class="ownership-options" id="ownership-options">
-                <h3>Which form of ownership<br>would you like to practise?</h3>
-                <div class="ownership-selection">
-                    <div class="ownership-option" data-ownership="sole">Sole Proprietorship</div>
-                    <div class="ownership-option selected" data-ownership="partnership">Partnership</div>
-                </div>
             </div>
             <button class="try-luck-button">Try my luck!</button>
         </div>
@@ -718,18 +688,21 @@
         </div>
         <div class="row income-statement" id="income-statement-row">
             <div class="cup-container">
-                <div class="cup" data-section="Trading"></div>
+                <div class="cup" data-section="I/S - Trading"></div>
                 <img class="reveal-image" src="" alt="reveal">
+                <div class="what-else-message">What may be another answer?</div>
                 <div class="section-label">Trading</div>
             </div>
             <div class="cup-container">
-                <div class="cup" data-section="P&L - Other Income"></div>
+                <div class="cup" data-section="I/S - Other Income"></div>
                 <img class="reveal-image" src="" alt="reveal">
+                <div class="what-else-message">What may be another answer?</div>
                 <div class="section-label">P&L - <br> Other Income</div>
             </div>
             <div class="cup-container">
-                <div class="cup" data-section="P&L - Other Expenses"></div>
+                <div class="cup" data-section="I/S - Other Expenses"></div>
                 <img class="reveal-image" src="" alt="reveal">
+                <div class="what-else-message">What may be another answer?</div>
                 <div class="section-label">P&L - <br> Other Expenses</div>
             </div>
         </div>
@@ -742,28 +715,33 @@
         </div>
         <div class="row">
             <div class="cup-container">
-                <div class="cup" data-section="NCA"></div>
+                <div class="cup" data-section="SOFP - NCA"></div>
                 <img class="reveal-image" src="" alt="reveal">
+                <div class="what-else-message">What may be another answer?</div>
                 <div class="section-label">NCA</div>
             </div>
             <div class="cup-container">
-                <div class="cup" data-section="CA"></div>
+                <div class="cup" data-section="SOFP - CA"></div>
                 <img class="reveal-image" src="" alt="reveal">
+                <div class="what-else-message">What may be another answer?</div>
                 <div class="section-label">CA</div>
             </div>
             <div class="cup-container">
-                <div class="cup" data-section="C"></div>
+                <div class="cup" data-section="SOFP - C"></div>
                 <img class="reveal-image" src="" alt="reveal">
+                <div class="what-else-message">What may be another answer?</div>
                 <div class="section-label">C</div>
             </div>
             <div class="cup-container">
-                <div class="cup" data-section="NCL"></div>
+                <div class="cup" data-section="SOFP - NCL"></div>
                 <img class="reveal-image" src="" alt="reveal">
+                <div class="what-else-message">What may be another answer?</div>
                 <div class="section-label">NCL</div>
             </div>
             <div class="cup-container">
-                <div class="cup" data-section="CL"></div>
+                <div class="cup" data-section="SOFP - CL"></div>
                 <img class="reveal-image" src="" alt="reveal">
+                <div class="what-else-message">What may be another answer?</div>
                 <div class="section-label">CL</div>
             </div>
         </div>
@@ -795,116 +773,113 @@
 
     <script>
         const originalItems = [
-            { name: "Abnormal inventory loss", soleSections: ["Trading", "P&L - Other Expenses"], partnershipSections: ["Trading", "P&L - Other Expenses"], chapters: ["Chp12"], multiple: true },
-            { name: "Accrued expenses", soleSections: ["CL"], partnershipSections: ["CL"], chapters: ["Chp9"] },
-            { name: "Accrued income", soleSections: ["CA"], partnershipSections: ["CA"], chapters: ["Chp9"] },
-            { name: "Accumulated Depreciation – [NCA]", soleSections: ["NCA"], partnershipSections: ["NCA"], chapters: ["Chp11"] },
-            { name: "Administrative expenses", soleSections: ["P&L - Other Expenses"], partnershipSections: ["P&L - Other Expenses"], chapters: [] },
-            { name: "Advertising", soleSections: ["P&L - Other Expenses"], partnershipSections: ["P&L - Other Expenses"], chapters: [] },
-            { name: "Allowance for doubtful accounts", soleSections: ["CA"], partnershipSections: ["CA"], chapters: ["Chp10"] },
-            { name: "Allowance for doubtful debts", soleSections: ["CA"], partnershipSections: ["CA"], chapters: ["Chp10"] },
-            { name: "Bad debts", soleSections: ["P&L - Other Expenses"], partnershipSections: ["P&L - Other Expenses"], chapters: ["Chp10"] },
-            { name: "Bank", soleSections: ["CA"], partnershipSections: ["CA"], chapters: [] },
-            { name: "Bank charges", soleSections: ["P&L - Other Expenses"], partnershipSections: ["P&L - Other Expenses"], chapters: [] },
-            { name: "Bank interest income", soleSections: ["P&L - Other Income"], partnershipSections: ["P&L - Other Income"], chapters: [] },
-            { name: "Bank loan", soleSections: ["NCL"], partnershipSections: ["NCL"], chapters: [] },
-            { name: "Bank overdraft", soleSections: ["CL"], partnershipSections: ["CL"], chapters: [] },
-            { name: "Buildings", soleSections: ["NCA"], partnershipSections: ["NCA"], chapters: [] },
-            { name: "Capital", soleSections: ["C"], partnershipSections: [], chapters: [] },
-            { name: "Carriage inwards", soleSections: ["Trading"], partnershipSections: ["Trading"], chapters: [] },
-            { name: "Carriage outwards", soleSections: ["P&L - Other Expenses"], partnershipSections: ["P&L - Other Expenses"], chapters: [] },
-            { name: "Cash", soleSections: ["CA"], partnershipSections: ["CA"], chapters: [] },
-            { name: "Cleaning", soleSections: ["P&L - Other Expenses"], partnershipSections: ["P&L - Other Expenses"], chapters: [] },
-            { name: "Commissions expenses", soleSections: ["P&L - Other Expenses"], partnershipSections: ["P&L - Other Expenses"], chapters: [] },
-            { name: "Commissions income", soleSections: ["P&L - Other Income"], partnershipSections: ["P&L - Other Income"], chapters: [] },
-            { name: "Decrease in bad debts", soleSections: ["P&L - Other Income"], partnershipSections: ["P&L - Other Income"], chapters: ["Chp10"] },
-            { name: "Deposit from customers (refundable)", soleSections: ["CL"], partnershipSections: ["CL"], chapters: [] },
-            { name: "Deposit to suppliers (refundable)", soleSections: ["CA"], partnershipSections: ["CA"], chapters: [] },
-            { name: "Depreciation – [NCA]", soleSections: ["P&L - Other Expenses"], partnershipSections: ["P&L - Other Expenses"], chapters: ["Chp11"] },
-            { name: "Discounts allowed", soleSections: ["P&L - Other Expenses"], partnershipSections: ["P&L - Other Expenses"], chapters: [] },
-            { name: "Discounts received", soleSections: ["P&L - Other Income"], partnershipSections: ["P&L - Other Income"], chapters: [] },
-            { name: "Drawings (in sole proprietorship)", soleSections: ["C"], partnershipSections: [], chapters: [], soleOnly: true },
-            { name: "Electricity", soleSections: ["P&L - Other Expenses"], partnershipSections: ["P&L - Other Expenses"], chapters: [] },
-            { name: "Fixed deposit", soleSections: ["CA"], partnershipSections: ["CA"], chapters: [] },
-            { name: "Fixtures and fittings", soleSections: ["NCA"], partnershipSections: ["NCA"], chapters: [] },
-            { name: "General expenses", soleSections: ["P&L - Other Expenses"], partnershipSections: ["P&L - Other Expenses"], chapters: [] },
-            { name: "Sundry expenses", soleSections: ["P&L - Other Expenses"], partnershipSections: ["P&L - Other Expenses"], chapters: [] },
-            { name: "Office expenses", soleSections: ["P&L - Other Expenses"], partnershipSections: ["P&L - Other Expenses"], chapters: [] },
-            { name: "Miscellaneous expenses", soleSections: ["P&L - Other Expenses"], partnershipSections: ["P&L - Other Expenses"], chapters: [] },
-            { name: "Heating and lighting", soleSections: ["P&L - Other Expenses"], partnershipSections: ["P&L - Other Expenses"], chapters: [] },
-            { name: "Insurance", soleSections: ["P&L - Other Expenses"], partnershipSections: ["P&L - Other Expenses"], chapters: [] },
-            { name: "Insurance compensation receivables", soleSections: ["CA"], partnershipSections: ["CA"], chapters: ["Chp11", "Chp12"] },
-            { name: "Interest on deposit", soleSections: ["P&L - Other Income"], partnershipSections: ["P&L - Other Income"], chapters: [] },
-            { name: "Interest on [loan from A]", soleSections: ["P&L - Other Expenses"], partnershipSections: ["P&L - Other Expenses"], chapters: [] },
-            { name: "Interest on [loan to B]", soleSections: ["P&L - Other Income"], partnershipSections: ["P&L - Other Income"], chapters: [] },
-            { name: "Interest on overdraft", soleSections: ["P&L - Other Expenses"], partnershipSections: ["P&L - Other Expenses"], chapters: [] },
-            { name: "Internet charges", soleSections: ["P&L - Other Expenses"], partnershipSections: ["P&L - Other Expenses"], chapters: [] },
-            { name: "Inventory, as at year start", soleSections: ["Trading"], partnershipSections: ["Trading"], chapters: [] },
-            { name: "Inventory, as at year end", soleSections: ["Trading", "CA"], partnershipSections: ["Trading", "CA"], chapters: [], multiple: true },
-            { name: "Land", soleSections: ["NCA"], partnershipSections: ["NCA"], chapters: [] },
-            { name: "Loan from C", soleSections: ["NCL"], partnershipSections: ["NCL"], chapters: [] },
-            { name: "Loan to D", soleSections: ["NCA"], partnershipSections: ["NCA"], chapters: [] },
-            { name: "Loan interest expenses", soleSections: ["P&L - Other Expenses"], partnershipSections: ["P&L - Other Expenses"], chapters: [] },
-            { name: "Long-term investments", soleSections: ["NCA"], partnershipSections: ["NCA"], chapters: [] },
-            { name: "Loss on disposal of [NCA]", soleSections: ["P&L - Other Expenses"], partnershipSections: ["P&L - Other Expenses"], chapters: ["Chp11"] },
-            { name: "Machinery", soleSections: ["NCA"], partnershipSections: ["NCA"], chapters: [] },
-            { name: "Management fees", soleSections: ["P&L - Other Expenses"], partnershipSections: ["P&L - Other Expenses"], chapters: [] },
-            { name: "Motor expenses", soleSections: ["P&L - Other Expenses"], partnershipSections: ["P&L - Other Expenses"], chapters: [] },
-            { name: "Motor repairs", soleSections: ["P&L - Other Expenses"], partnershipSections: ["P&L - Other Expenses"], chapters: [] },
-            { name: "Motor vehicles", soleSections: ["NCA"], partnershipSections: ["NCA"], chapters: [] },
-            { name: "Net loss (in sole proprietorship)", soleSections: ["C"], partnershipSections: [], chapters: [], soleOnly: true },
-            { name: "Net profit (in sole proprietorship)", soleSections: ["C"], partnershipSections: [], chapters: [], soleOnly: true },
-            { name: "New capital contribution (in sole proprietorship)", soleSections: ["C"], partnershipSections: [], chapters: [], soleOnly: true },
-            { name: "Net loss (in partnership)", soleSections: [], partnershipSections: ["P&L - Appropriation"], chapters: ["Chp13"] },
-            { name: "Net profit (in partnership)", soleSections: [], partnershipSections: ["P&L - Appropriation"], chapters: ["Chp13"] },
-            { name: "Office equipment", soleSections: ["NCA"], partnershipSections: ["NCA"], chapters: [] },
-            { name: "Other payables", soleSections: ["CL"], partnershipSections: ["CL"], chapters: [] },
-            { name: "Other receivables", soleSections: ["CA"], partnershipSections: ["CA"], chapters: [] },
-            { name: "Postages", soleSections: ["P&L - Other Expenses"], partnershipSections: ["P&L - Other Expenses"], chapters: [] },
-            { name: "Premises", soleSections: ["NCA"], partnershipSections: ["NCA"], chapters: [] },
-            { name: "Prepaid expenses", soleSections: ["CA"], partnershipSections: ["CA"], chapters: ["Chp9"] },
-            { name: "Printing and stationery", soleSections: ["P&L - Other Expenses"], partnershipSections: ["P&L - Other Expenses"], chapters: [] },
-            { name: "Profit on disposal of [NCA]", soleSections: ["P&L - Other Income"], partnershipSections: ["P&L - Other Income"], chapters: ["Chp11"] },
-            { name: "Purchases", soleSections: ["Trading"], partnershipSections: ["Trading"], chapters: [] },
-            { name: "Purchases returns", soleSections: ["Trading"], partnershipSections: ["Trading"], chapters: [] },
-            { name: "Rent and rates", soleSections: ["P&L - Other Expenses"], partnershipSections: ["P&L - Other Expenses"], chapters: [] },
-            { name: "Rental deposit from tenants", soleSections: ["CL"], partnershipSections: ["CL"], chapters: [] },
-            { name: "Rental deposit to landlords", soleSections: ["CA"], partnershipSections: ["CA"], chapters: [] },
-            { name: "Rental income", soleSections: ["P&L - Other Income"], partnershipSections: ["P&L - Other Income"], chapters: [] },
-            { name: "Repairs and maintenance", soleSections: ["P&L - Other Expenses"], partnershipSections: ["P&L - Other Expenses"], chapters: [] },
-            { name: "Returns inwards", soleSections: ["Trading"], partnershipSections: ["Trading"], chapters: [] },
-            { name: "Returns outwards", soleSections: ["Trading"], partnershipSections: ["Trading"], chapters: [] },
-            { name: "Revenue", soleSections: ["Trading"], partnershipSections: ["Trading"], chapters: [] },
-            { name: "Revenue returns", soleSections: ["Trading"], partnershipSections: ["Trading"], chapters: [] },
-            { name: "Sales", soleSections: ["Trading"], partnershipSections: ["Trading"], chapters: [] },
-            { name: "Sales returns", soleSections: ["Trading"], partnershipSections: ["Trading"], chapters: [] },
-            { name: "Selling and distribution costs", soleSections: ["P&L - Other Expenses"], partnershipSections: ["P&L - Other Expenses"], chapters: [] },
-            { name: "Short-term investments", soleSections: ["CA"], partnershipSections: ["CA"], chapters: [] },
-            { name: "Staff welfare and entertainment", soleSections: ["P&L - Other Expenses"], partnershipSections: ["P&L - Other Expenses"], chapters: [] },
-            { name: "Telecommunications", soleSections: ["P&L - Other Expenses"], partnershipSections: ["P&L - Other Expenses"], chapters: [] },
-            { name: "Telephone", soleSections: ["P&L - Other Expenses"], partnershipSections: ["P&L - Other Expenses"], chapters: [] },
-            { name: "Time deposit", soleSections: ["CA"], partnershipSections: ["CA"], chapters: [] },
-            { name: "Trade payables", soleSections: ["CL"], partnershipSections: ["CL"], chapters: [] },
-            { name: "Trade receivables", soleSections: ["CA"], partnershipSections: ["CA"], chapters: [] },
-            { name: "Travelling", soleSections: ["P&L - Other Expenses"], partnershipSections: ["P&L - Other Expenses"], chapters: [] },
-            { name: "Unearned income", soleSections: ["CL"], partnershipSections: ["CL"], chapters: ["Chp9"] },
-            { name: "Utilities", soleSections: ["P&L - Other Expenses"], partnershipSections: ["P&L - Other Expenses"], chapters: [] },
-            { name: "Wages and salaries", soleSections: ["P&L - Other Expenses"], partnershipSections: ["P&L - Other Expenses"], chapters: [] },
-            { name: "Water", soleSections: ["P&L - Other Expenses"], partnershipSections: ["P&L - Other Expenses"], chapters: [] },
-            { name: "Sundry expenses (2)", soleSections: ["P&L - Other Expenses"], partnershipSections: ["P&L - Other Expenses"], chapters: [] },
-            { name: "Office expenses (2)", soleSections: ["P&L - Other Expenses"], partnershipSections: ["P&L - Other Expenses"], chapters: [] },
-            { name: "Miscellaneous expenses (2)", soleSections: ["P&L - Other Expenses"], partnershipSections: ["P&L - Other Expenses"], chapters: [] },
-            { name: "Term deposit", soleSections: ["CA"], partnershipSections: ["CA"], chapters: [] },
-            { name: "Gain on disposal of [NCA]", soleSections: ["P&L - Other Income"], partnershipSections: ["P&L - Other Income"], chapters: ["Chp11"] },
-            { name: "Interest on drawings", soleSections: [], partnershipSections: ["P&L - Appropriation"], chapters: ["Chp13"] },
-            { name: "Interest on capital", soleSections: [], partnershipSections: ["P&L - Appropriation"], chapters: ["Chp13"] },
-            { name: "Partner’s salary", soleSections: [], partnershipSections: ["P&L - Appropriation"], chapters: ["Chp13"] },
-            { name: "Share of profit", soleSections: [], partnershipSections: ["P&L - Appropriation"], chapters: ["Chp13"] },
-            { name: "Share of loss", soleSections: [], partnershipSections: ["P&L - Appropriation"], chapters: ["Chp13"] },
-            { name: "Capital – [Partner]", soleSections: [], partnershipSections: ["C"], chapters: ["Chp13"] },
-            { name: "Current – [Partner]", soleSections: [], partnershipSections: ["C"], chapters: ["Chp13"] },
-            { name: "Loan from Partner", soleSections: [], partnershipSections: ["NCL"], chapters: ["Chp13"] },
-            { name: "Interest on [loan from Partner]", soleSections: [], partnershipSections: ["P&L - Other Expenses"], chapters: ["Chp13"] }
+            { name: "Abnormal inventory loss", sections: ["I/S - Trading", "I/S - Other Expenses"], alternateSections: [], chapters: ["Chp12"], multiple: true },
+            { name: "Accrued expenses", sections: ["SOFP - CL"], alternateSections: [], chapters: ["Chp9"] },
+            { name: "Accrued income", sections: ["SOFP - CA"], alternateSections: [], chapters: ["Chp9"] },
+            { name: "Accumulated Depreciation - [NCA]", sections: ["SOFP - NCA"], alternateSections: [], chapters: ["Chp11"] },
+            { name: "Administrative expenses", sections: ["I/S - Other Expenses"], alternateSections: [], chapters: [] },
+            { name: "Advertising", sections: ["I/S - Other Expenses"], alternateSections: [], chapters: [] },
+            { name: "Allowance for doubtful accounts", sections: ["SOFP - CA"], alternateSections: [], chapters: ["Chp10"] },
+            { name: "Allowance for doubtful debts", sections: ["SOFP - CA"], alternateSections: [], chapters: ["Chp10"] },
+            { name: "Bad debts", sections: ["I/S - Other Expenses"], alternateSections: [], chapters: ["Chp10"] },
+            { name: "Bank", sections: ["SOFP - CA"], alternateSections: [], chapters: [] },
+            { name: "Bank charges", sections: ["I/S - Other Expenses"], alternateSections: [], chapters: [] },
+            { name: "Bank interest income", sections: ["I/S - Other Income"], alternateSections: [], chapters: [] },
+            { name: "Bank loan", sections: ["SOFP - NCL"], alternateSections: ["SOFP - CL"], chapters: [] },
+            { name: "Bank overdraft", sections: ["SOFP - CL"], alternateSections: [], chapters: [] },
+            { name: "Buildings", sections: ["SOFP - NCA"], alternateSections: [], chapters: [] },
+            { name: "Capital", sections: ["SOFP - C"], alternateSections: [], chapters: [] },
+            { name: "Carriage inwards", sections: ["I/S - Trading"], alternateSections: [], chapters: [] },
+            { name: "Carriage outwards", sections: ["I/S - Other Expenses"], alternateSections: [], chapters: [] },
+            { name: "Cash", sections: ["SOFP - CA"], alternateSections: [], chapters: [] },
+            { name: "Cleaning", sections: ["I/S - Other Expenses"], alternateSections: [], chapters: [] },
+            { name: "Commissions expense", sections: ["I/S - Other Expenses"], alternateSections: [], chapters: [] },
+            { name: "Commissions income", sections: ["I/S - Other Income"], alternateSections: [], chapters: [] },
+            { name: "Decrease in bad debts", sections: ["I/S - Other Income"], alternateSections: [], chapters: ["Chp10"] },
+            { name: "Deposit from customers (refundable)", sections: ["SOFP - CL"], alternateSections: ["SOFP - NCL"], chapters: [] },
+            { name: "Deposit to suppliers (refundable)", sections: ["SOFP - CA"], alternateSections: ["SOFP - NCA"], chapters: [] },
+            { name: "Depreciation - [NCA]", sections: ["I/S - Other Expenses"], alternateSections: [], chapters: ["Chp11"] },
+            { name: "Discounts allowed", sections: ["I/S - Other Expenses"], alternateSections: [], chapters: [] },
+            { name: "Discounts received", sections: ["I/S - Other Income"], alternateSections: [], chapters: [] },
+            { name: "Drawings (in sole proprietorship)", sections: ["SOFP - C"], alternateSections: [], chapters: [], soleOnly: true },
+            { name: "Electricity", sections: ["I/S - Other Expenses"], alternateSections: [], chapters: [] },
+            { name: "Fixed deposit", sections: ["SOFP - CA"], alternateSections: ["SOFP - NCA"], chapters: [] },
+            { name: "Fixtures and fittings", sections: ["SOFP - NCA"], alternateSections: [], chapters: [] },
+            { name: "General expenses", sections: ["I/S - Other Expenses"], alternateSections: [], chapters: [] },
+            { name: "Sundry expenses", sections: ["I/S - Other Expenses"], alternateSections: [], chapters: [] },
+            { name: "Office expenses", sections: ["I/S - Other Expenses"], alternateSections: [], chapters: [] },
+            { name: "Miscellaneous expenses", sections: ["I/S - Other Expenses"], alternateSections: [], chapters: [] },
+            { name: "Heating and lighting", sections: ["I/S - Other Expenses"], alternateSections: [], chapters: [] },
+            { name: "Insurance", sections: ["I/S - Other Expenses"], alternateSections: [], chapters: [] },
+            { name: "Insurance compensation receivables", sections: ["SOFP - CA"], alternateSections: [], chapters: ["Chp11", "Chp12"] },
+            { name: "Interest on deposit", sections: ["I/S - Other Income"], alternateSections: [], chapters: [] },
+            { name: "Interest on [loan from A]", sections: ["I/S - Other Expenses"], alternateSections: [], chapters: [] },
+            { name: "Interest on [loan to B]", sections: ["I/S - Other Income"], alternateSections: [], chapters: [] },
+            { name: "Interest on overdraft", sections: ["I/S - Other Expenses"], alternateSections: [], chapters: [] },
+            { name: "Internet charges", sections: ["I/S - Other Expenses"], alternateSections: [], chapters: [] },
+            { name: "Inventory, as at year start", sections: ["I/S - Trading"], alternateSections: [], chapters: [] },
+            { name: "Inventory, as at year end", sections: ["I/S - Trading", "SOFP - CA"], alternateSections: [], chapters: [], multiple: true },
+            { name: "Land", sections: ["SOFP - NCA"], alternateSections: [], chapters: [] },
+            { name: "Loan from C", sections: ["SOFP - NCL"], alternateSections: ["SOFP - CL"], chapters: [] },
+            { name: "Loan to D", sections: ["SOFP - NCA"], alternateSections: ["SOFP - CA"], chapters: [] },
+            { name: "Loan interest expenses", sections: ["I/S - Other Expenses"], alternateSections: [], chapters: [] },
+            { name: "Long-term investments", sections: ["SOFP - NCA"], alternateSections: [], chapters: [] },
+            { name: "Loss on disposal of [NCA]", sections: ["I/S - Other Expenses"], alternateSections: [], chapters: ["Chp11"] },
+            { name: "Machinery", sections: ["SOFP - NCA"], alternateSections: [], chapters: [] },
+            { name: "Management fees", sections: ["I/S - Other Expenses"], alternateSections: [], chapters: [] },
+            { name: "Motor expenses", sections: ["I/S - Other Expenses"], alternateSections: [], chapters: [] },
+            { name: "Motor repairs", sections: ["I/S - Other Expenses"], alternateSections: [], chapters: [] },
+            { name: "Motor vehicles", sections: ["SOFP - NCA"], alternateSections: [], chapters: [] },
+            { name: "Net loss", sections: ["SOFP - C"], soleProprietorshipSection: "SOFP - C", alternateSections: ["I/S - P&L App"], chapters: [], soleOnly: true },
+            { name: "Net profit", sections: ["SOFP - C"], soleProprietorshipSection: "SOFP - C", alternateSections: ["I/S - P&L App"], chapters: [], soleOnly: true },
+            { name: "New capital contribution", sections: ["SOFP - C"], alternateSections: [], chapters: [], soleOnly: true },
+            { name: "Net loss (in partnership)", sections: ["I/S - P&L App"], alternateSections: [], chapters: ["Chp13"] },
+            { name: "Net profit (in partnership)", sections: ["I/S - P&L App"], alternateSections: [], chapters: ["Chp13"] },
+            { name: "Office equipment", sections: ["SOFP - NCA"], alternateSections: [], chapters: [] },
+            { name: "Other payables", sections: ["SOFP - CL"], alternateSections: [], chapters: [] },
+            { name: "Other receivables", sections: ["SOFP - CA"], alternateSections: [], chapters: [] },
+            { name: "Postages", sections: ["I/S - Other Expenses"], alternateSections: [], chapters: [] },
+            { name: "Premises", sections: ["SOFP - NCA"], alternateSections: [], chapters: [] },
+            { name: "Prepaid expenses", sections: ["SOFP - CA"], alternateSections: [], chapters: ["Chp9"] },
+            { name: "Printing and stationery", sections: ["I/S - Other Expenses"], alternateSections: [], chapters: [] },
+            { name: "Profit on disposal of [NCA]", sections: ["I/S - Other Income"], alternateSections: [], chapters: ["Chp11"] },
+            { name: "Purchases", sections: ["I/S - Trading"], alternateSections: [], chapters: [] },
+            { name: "Purchases returns", sections: ["I/S - Trading"], alternateSections: [], chapters: [] },
+            { name: "Rent and rates", sections: ["I/S - Other Expenses"], alternateSections: [], chapters: [] },
+            { name: "Rental deposit from tenants", sections: ["SOFP - CL"], alternateSections: ["SOFP - NCL"], chapters: [] },
+            { name: "Rental deposit to landlords", sections: ["SOFP - CA"], alternateSections: ["SOFP - NCA"], chapters: [] },
+            { name: "Rental income", sections: ["I/S - Other Income"], alternateSections: [], chapters: [] },
+            { name: "Repairs and maintenance", sections: ["I/S - Other Expenses"], alternateSections: [], chapters: [] },
+            { name: "Returns inwards", sections: ["I/S - Trading"], alternateSections: [], chapters: [] },
+            { name: "Returns outwards", sections: ["I/S - Trading"], alternateSections: [], chapters: [] },
+            { name: "Revenue", sections: ["I/S - Trading"], alternateSections: [], chapters: [] },
+            { name: "Revenue returns", sections: ["I/S - Trading"], alternateSections: [], chapters: [] },
+            { name: "Sales", sections: ["I/S - Trading"], alternateSections: [], chapters: [] },
+            { name: "Sales returns", sections: ["I/S - Trading"], alternateSections: [], chapters: [] },
+            { name: "Selling and distribution costs", sections: ["I/S - Other Expenses"], alternateSections: [], chapters: [] },
+            { name: "Short-term investments", sections: ["SOFP - CA"], alternateSections: [], chapters: [] },
+            { name: "Staff welfare and entertainment", sections: ["I/S - Other Expenses"], alternateSections: [], chapters: [] },
+            { name: "Telecommunications", sections: ["I/S - Other Expenses"], alternateSections: [], chapters: [] },
+            { name: "Telephone", sections: ["I/S - Other Expenses"], alternateSections: [], chapters: [] },
+            { name: "Time deposit", sections: ["SOFP - CA"], alternateSections: ["SOFP - NCA"], chapters: [] },
+            { name: "Trade payables", sections: ["SOFP - CL"], alternateSections: [], chapters: [] },
+            { name: "Trade receivables", sections: ["SOFP - CA"], alternateSections: [], chapters: [] },
+            { name: "Travelling", sections: ["I/S - Other Expenses"], alternateSections: [], chapters: [] },
+            { name: "Unearned income", sections: ["SOFP - CL"], alternateSections: [], chapters: ["Chp9"] },
+            { name: "Utilities", sections: ["I/S - Other Expenses"], alternateSections: [], chapters: [] },
+            { name: "Wages and salaries", sections: ["I/S - Other Expenses"], alternateSections: [], chapters: [] },
+            { name: "Water", sections: ["I/S - Other Expenses"], alternateSections: [], chapters: [] },
+            { name: "Term deposit", sections: ["SOFP - CA"], alternateSections: [], chapters: [] },
+            { name: "Gain on disposal of [NCA]", sections: ["I/S - Other Income"], alternateSections: [], chapters: ["Chp11"] },
+            { name: "Interest on drawings", sections: ["I/S - P&L App"], alternateSections: [], chapters: ["Chp13"] },
+            { name: "Interest on capital", sections: ["I/S - P&L App"], alternateSections: [], chapters: ["Chp13"] },
+            { name: "Partner's salary", sections: ["I/S - P&L App"], alternateSections: [], chapters: ["Chp13"] },
+            { name: "Share of profit", sections: ["I/S - P&L App"], alternateSections: [], chapters: ["Chp13"] },
+            { name: "Share of loss", sections: ["I/S - P&L App"], alternateSections: [], chapters: ["Chp13"] },
+            { name: "Capital - [Partner]", sections: ["SOFP - C"], alternateSections: [], chapters: ["Chp13"] },
+            { name: "Current - [Partner]", sections: ["SOFP - C"], alternateSections: [], chapters: ["Chp13"] },
+            { name: "Loan from Partner", sections: ["SOFP - NCL"], alternateSections: [], chapters: ["Chp13"] },
+            { name: "Interest on [loan from Partner]", sections: ["I/S - Other Expenses"], alternateSections: [], chapters: ["Chp13"] }
         ];
 
         const darumaImages = [
@@ -925,6 +900,8 @@
         let incorrectAnswers = [];
         let totalQuestionCount = 0;
         let usedItems = new Set();
+        let clickCount = 0;
+        let firstCorrectCup = null;
         const cups = document.querySelectorAll('.cup');
         const questionDiv = document.getElementById('question');
         const feedbackDiv = document.getElementById('feedback');
@@ -955,14 +932,11 @@
         const incorrectSound = document.getElementById('incorrect');
         const incomeStatementRow = document.getElementById('income-statement-row');
         const totalQuestionsSpan = document.getElementById('total-questions');
-        const ownershipOptions = document.getElementById('ownership-options');
 
-        // Set audio volumes
         backgroundMusic.volume = 0.4;
         correctSound.volume = 1.0;
         incorrectSound.volume = 1.0;
 
-        // Load saved chapter and ownership selections or set defaults
         let chapterSelections = JSON.parse(localStorage.getItem('chapterSelections')) || {
             Chp9: true,
             Chp10: true,
@@ -970,7 +944,6 @@
             Chp12: true,
             Chp13: true
         };
-        let ownershipSelection = localStorage.getItem('ownershipSelection') || 'partnership';
 
         function updateChapterSelections() {
             const options = document.querySelectorAll('.chapter-option');
@@ -978,25 +951,10 @@
                 const chapter = option.dataset.chapter;
                 option.classList.toggle('selected', chapterSelections[chapter]);
             });
-            ownershipOptions.style.display = chapterSelections.Chp13 ? 'flex' : 'none';
-            updateOwnershipSelection();
-            if (!chapterSelections.Chp13) {
-                ownershipSelection = 'sole';
-            }
         }
 
-        function updateOwnershipSelection() {
-            const options = document.querySelectorAll('.ownership-option');
-            options.forEach(option => {
-                const ownership = option.dataset.ownership;
-                option.classList.toggle('selected', ownership === ownershipSelection);
-            });
-        }
-
-        // Apply saved selections on page load
         updateChapterSelections();
 
-        // Chapter selection toggle
         document.querySelectorAll('.chapter-option').forEach(option => {
             option.addEventListener('click', () => {
                 const chapter = option.dataset.chapter;
@@ -1005,28 +963,21 @@
             });
         });
 
-        // Ownership selection toggle
-        document.querySelectorAll('.ownership-option').forEach(option => {
-            option.addEventListener('click', () => {
-                ownershipSelection = option.dataset.ownership;
-                updateOwnershipSelection();
-            });
-        });
-
         function updateIncomeStatementRow() {
-            const existingAppropriation = document.querySelector('[data-section="P&L - Appropriation"]');
+            const existingAppropriation = document.querySelector('[data-section="I/S - P&L App"]');
             if (existingAppropriation) {
                 existingAppropriation.parentElement.remove();
             }
-            incomeStatementRow.classList.toggle('partnership-mode', chapterSelections.Chp13 && ownershipSelection === 'partnership');
+            incomeStatementRow.classList.toggle('chapter13-mode', chapterSelections.Chp13);
 
-            if (chapterSelections.Chp13 && ownershipSelection === 'partnership') {
+            if (chapterSelections.Chp13) {
                 const cupContainer = document.createElement('div');
                 cupContainer.className = 'cup-container';
                 cupContainer.innerHTML = `
-                    <div class="cup" data-section="P&L - Appropriation"></div>
+                    <div class="cup" data-section="I/S - P&L App"></div>
                     <img class="reveal-image" src="" alt="reveal">
-                    <div class="section-label appropriation"><span class="small-text">P&L - </span><br>Appropriation </div>
+                    <div class="what-else-message">What may be another answer?</div>
+                    <div class="section-label appropriation"><span class="small-text">P&L - </span><br>Appropriation</div>
                 `;
                 incomeStatementRow.appendChild(cupContainer);
 
@@ -1035,48 +986,240 @@
             }
         }
 
+        function showResultPage() {
+            gameContent.style.display = 'none';
+            resultPage.style.display = 'block';
+            resultsContainer.style.display = 'flex';
+            resultScore.textContent = `Score: ${scoreCorrect} / ${totalQuestions}`;
+            const percentage = totalQuestions > 0 ? (scoreCorrect / totalQuestions * 100) : 0;
+            if (percentage === 100 && scoreCorrect === totalQuestionCount) {
+                endMessage.textContent = "Congrats! You are the luckiest man on earth! 🙇🏻‍♂️";
+            } else if (percentage === 100 || percentage >= 90) {
+                endMessage.textContent = "You possess almost all the Forces in the universe!";
+            } else if (percentage >= 80) {
+                endMessage.textContent = "Closer to becoming the luckiest man!";
+            } else if (percentage >= 70) {
+                endMessage.textContent = "Good job!";
+            } else if (percentage >= 50) {
+                endMessage.textContent = "Nice Try!";
+            } else {
+                endMessage.innerHTML = "Sadly, you need more practice. <br>Luck comes with hard work.";
+            }
+            correctAnswersDiv.querySelector('h3').textContent = `Congrats! You've got ${correctAnswers.length} out of ${totalQuestions} correct!`;
+            correctAnswersList.innerHTML = '';
+            correctAnswersList.innerHTML = correctAnswers.map(item => `<li>${item.name}: ${item.sections.join(', ')}</li>`).join('');
+            if (incorrectAnswers.length === 0) {
+                wrongAnswersDiv.querySelector('h3').textContent = "You missed 0. Nailed it!";
+                wrongAnswersList.innerHTML = '';
+            } else {
+                wrongAnswersDiv.querySelector('h3').innerHTML = `You missed ${incorrectAnswers.length}.<br>Can do better next time!`;
+                wrongAnswersList.innerHTML = incorrectAnswers.map(item => `
+                    <li>
+                        <strong>${item.item.name}</strong>:<br>
+                        ${item.correctSections.join(', ')}
+                    </li>
+                `).join('');
+            }
+            backgroundMusic.pause();
+            backgroundMusic.currentTime = 0;
+        }
+
         function handleCupClick() {
             if (this.style.pointerEvents === 'none') return;
-            const selectedSections = [];
-            if (currentItem.multiple) {
-                this.classList.toggle('selected');
-                selectedSections.push(...Array.from(document.querySelectorAll('.cup'))
-                    .filter(c => c.classList.contains('selected'))
-                    .map(c => c.dataset.section));
-            } else {
+
+            clickCount++;
+            const selectedSection = this.dataset.section;
+            const correctSections = currentItem.sections || [];
+            const soleProprietorshipSection = currentItem.soleProprietorshipSection;
+            const alternateSections = currentItem.alternateSections || [];
+
+            // Handle items with alternate sections (require 2 clicks)
+            if (alternateSections.length > 0) {
+                if (clickCount === 1) {
+                    document.querySelectorAll('.what-else-message').forEach(msg => msg.style.display = 'none');
+                    // First click must match soleProprietorshipSection
+                    if (soleProprietorshipSection && selectedSection === soleProprietorshipSection) {
+                        this.classList.add('selected');
+                        const revealImage = this.nextElementSibling;
+                        revealImage.src = darumaImages[Math.floor(Math.random() * darumaImages.length)];
+                        revealImage.style.opacity = '1';
+                        this.style.pointerEvents = 'none';
+                        firstCorrectCup = this;
+                        const whatElseMessage = revealImage.nextElementSibling;
+                        whatElseMessage.style.display = 'block';
+                        document.querySelectorAll('.cup').forEach(cup => {
+                            if (cup !== this) {
+                                cup.style.pointerEvents = 'auto';
+                            }
+                        });
+                    } else {
+                        // First click is incorrect
+                        this.classList.add('selected');
+                        const revealImage = this.nextElementSibling;
+                        revealImage.src = 'https://i.postimg.cc/Wz6s5m6k/monster.png';
+                        revealImage.style.opacity = '1';
+                        this.style.pointerEvents = 'none';
+                        // Reveal soleProprietorshipSection
+                        document.querySelectorAll('.cup').forEach(cup => {
+                            if (cup.dataset.section === soleProprietorshipSection) {
+                                cup.classList.add('disappear');
+                                const correctRevealImage = cup.nextElementSibling;
+                                correctRevealImage.src = darumaImages[Math.floor(Math.random() * darumaImages.length)];
+                                correctRevealImage.style.opacity = '1';
+                                cup.style.pointerEvents = 'none';
+                            }
+                        });
+                        // After 1 second, reveal alternate section
+                        setTimeout(() => {
+                            document.querySelectorAll('.cup').forEach(cup => {
+                                if (alternateSections.includes(cup.dataset.section)) {
+                                    cup.classList.add('disappear');
+                                    const correctRevealImage = cup.nextElementSibling;
+                                    correctRevealImage.src = darumaImages[Math.floor(Math.random() * darumaImages.length)];
+                                    correctRevealImage.style.opacity = '1';
+                                    cup.style.pointerEvents = 'none';
+                                }
+                            });
+                        }, 1000);
+                        updateScore(false, [soleProprietorshipSection, ...alternateSections]);
+                        document.querySelectorAll('.cup').forEach(cup => cup.style.pointerEvents = 'none');
+                        setTimeout(setNewQuestion, 2500);
+                    }
+                } else if (clickCount === 2) {
+                    document.querySelectorAll('.what-else-message').forEach(msg => msg.style.display = 'none');
+                    const isCorrect = alternateSections.includes(selectedSection) && selectedSection !== firstCorrectCup.dataset.section;
+
+                    if (isCorrect) {
+                        // Second click is correct
+                        this.classList.add('selected');
+                        const revealImage = this.nextElementSibling;
+                        revealImage.src = darumaImages[Math.floor(Math.random() * darumaImages.length)];
+                        revealImage.style.opacity = '1';
+                        this.style.pointerEvents = 'none';
+                        updateScore(true, [soleProprietorshipSection, selectedSection]);
+                        document.querySelectorAll('.cup').forEach(cup => cup.style.pointerEvents = 'none');
+                        setTimeout(setNewQuestion, 1000);
+                    } else {
+                        // Second click is incorrect
+                        this.classList.add('selected');
+                        const revealImage = this.nextElementSibling;
+                        revealImage.src = 'https://i.postimg.cc/Wz6s5m6k/monster.png';
+                        revealImage.style.opacity = '1';
+                        this.style.pointerEvents = 'none';
+                        // Reveal the correct alternate section
+                        document.querySelectorAll('.cup').forEach(cup => {
+                            if (alternateSections.includes(cup.dataset.section)) {
+                                cup.classList.add('disappear');
+                                const correctRevealImage = cup.nextElementSibling;
+                                correctRevealImage.src = darumaImages[Math.floor(Math.random() * darumaImages.length)];
+                                correctRevealImage.style.opacity = '1';
+                                cup.style.pointerEvents = 'none';
+                            }
+                        });
+                        updateScore(false, [soleProprietorshipSection, ...alternateSections]);
+                        document.querySelectorAll('.cup').forEach(cup => cup.style.pointerEvents = 'none');
+                        setTimeout(setNewQuestion, 1500);
+                    }
+                }
+            }
+            // Handle items with multiple sections (not alternate)
+            else if (currentItem.multiple) {
+                if (clickCount === 1) {
+                    document.querySelectorAll('.what-else-message').forEach(msg => msg.style.display = 'none');
+                    if (correctSections.includes(selectedSection)) {
+                        this.classList.add('selected');
+                        const revealImage = this.nextElementSibling;
+                        revealImage.src = darumaImages[Math.floor(Math.random() * darumaImages.length)];
+                        revealImage.style.opacity = '1';
+                        this.style.pointerEvents = 'none';
+                        firstCorrectCup = this;
+                        const whatElseMessage = revealImage.nextElementSibling;
+                        whatElseMessage.style.display = 'block';
+                        document.querySelectorAll('.cup').forEach(cup => {
+                            if (cup !== this) {
+                                cup.style.pointerEvents = 'auto';
+                            }
+                        });
+                    } else {
+                        this.classList.add('selected');
+                        const revealImage = this.nextElementSibling;
+                        revealImage.src = 'https://i.postimg.cc/Wz6s5m6k/monster.png';
+                        revealImage.style.opacity = '1';
+                        this.style.pointerEvents = 'none';
+                        document.querySelectorAll('.cup').forEach(cup => {
+                            if (correctSections.includes(cup.dataset.section)) {
+                                cup.classList.add('disappear');
+                                const correctRevealImage = cup.nextElementSibling;
+                                correctRevealImage.src = darumaImages[Math.floor(Math.random() * darumaImages.length)];
+                                correctRevealImage.style.opacity = '1';
+                                cup.style.pointerEvents = 'none';
+                            }
+                        });
+                        updateScore(false, correctSections);
+                        document.querySelectorAll('.cup').forEach(cup => cup.style.pointerEvents = 'none');
+                        setTimeout(setNewQuestion, 1500);
+                    }
+                } else if (clickCount === 2) {
+                    document.querySelectorAll('.what-else-message').forEach(msg => msg.style.display = 'none');
+                    const isCorrect = correctSections.includes(selectedSection) && selectedSection !== firstCorrectCup.dataset.section;
+
+                    if (isCorrect) {
+                        this.classList.add('selected');
+                        const revealImage = this.nextElementSibling;
+                        revealImage.src = darumaImages[Math.floor(Math.random() * darumaImages.length)];
+                        revealImage.style.opacity = '1';
+                        this.style.pointerEvents = 'none';
+                    } else {
+                        this.classList.add('selected');
+                        const revealImage = this.nextElementSibling;
+                        revealImage.src = 'https://i.postimg.cc/Wz6s5m6k/monster.png';
+                        revealImage.style.opacity = '1';
+                        this.style.pointerEvents = 'none';
+                        const remainingCorrectSection = correctSections.find(section => section !== firstCorrectCup.dataset.section);
+                        document.querySelectorAll('.cup').forEach(cup => {
+                            if (cup.dataset.section === remainingCorrectSection) {
+                                cup.classList.add('disappear');
+                                const correctRevealImage = cup.nextElementSibling;
+                                correctRevealImage.src = darumaImages[Math.floor(Math.random() * darumaImages.length)];
+                                correctRevealImage.style.opacity = '1';
+                                cup.style.pointerEvents = 'none';
+                            }
+                        });
+                    }
+
+                    updateScore(isCorrect, correctSections);
+                    document.querySelectorAll('.cup').forEach(cup => cup.style.pointerEvents = 'none');
+                    setTimeout(setNewQuestion, isCorrect ? 1000 : 1500);
+                }
+            }
+            // Handle single-section items
+            else {
+                document.querySelectorAll('.what-else-message').forEach(msg => msg.style.display = 'none');
                 document.querySelectorAll('.cup').forEach(c => {
                     c.classList.remove('selected');
                     c.classList.remove('disappear');
                 });
                 this.classList.add('selected');
-                selectedSections.push(this.dataset.section);
+                const isCorrect = correctSections.includes(selectedSection);
+
+                document.querySelectorAll('.cup').forEach(c => {
+                    const revealImage = c.nextElementSibling;
+                    if (correctSections.includes(c.dataset.section)) {
+                        revealImage.src = darumaImages[Math.floor(Math.random() * darumaImages.length)];
+                        revealImage.style.opacity = '1';
+                        c.classList.add(c.classList.contains('selected') ? 'selected' : 'disappear');
+                        c.style.pointerEvents = 'none';
+                    } else if (c.classList.contains('selected')) {
+                        revealImage.src = 'https://i.postimg.cc/Wz6s5m6k/monster.png';
+                        revealImage.style.opacity = '1';
+                        c.style.pointerEvents = 'none';
+                    }
+                });
+
+                updateScore(isCorrect, correctSections);
+                document.querySelectorAll('.cup').forEach(cup => cup.style.pointerEvents = 'none');
+                setTimeout(setNewQuestion, isCorrect ? 1000 : 1500);
             }
-
-            const correctSections = currentItem.sections || [];
-            let isCorrect;
-            if (currentItem.multiple) {
-                isCorrect = correctSections.every(section => selectedSections.includes(section)) && selectedSections.every(section => correctSections.includes(section));
-            } else {
-                isCorrect = selectedSections.length === 1 && correctSections.includes(selectedSections[0]);
-            }
-
-            document.querySelectorAll('.cup').forEach(c => {
-                const revealImage = c.nextElementSibling;
-                if (correctSections.includes(c.dataset.section)) {
-                    revealImage.src = darumaImages[Math.floor(Math.random() * darumaImages.length)];
-                    revealImage.style.opacity = '1';
-                    c.classList.add(c.classList.contains('selected') ? 'selected' : 'disappear');
-                    c.style.pointerEvents = 'none';
-                } else if (c.classList.contains('selected')) {
-                    revealImage.src = 'https://i.postimg.cc/Wz6s5m6k/monster.png';
-                    revealImage.style.opacity = '1';
-                    c.style.pointerEvents = 'none';
-                }
-            });
-
-            updateScore(isCorrect, correctSections);
-            document.querySelectorAll('.cup').forEach(cup => cup.style.pointerEvents = 'none');
-            setTimeout(setNewQuestion, isCorrect ? 1000 : 1500);
         }
 
         async function copyToClipboard(text, feedbackElement) {
@@ -1124,9 +1267,7 @@
             copyToClipboard(text, copyCorrectFeedback);
         });
 
-        // Start button click handler
         startButton.addEventListener('click', () => {
-            console.log('Start button clicked');
             startPage.style.display = 'none';
             chapterSelectionModal.style.display = 'flex';
             usedItems.clear();
@@ -1134,18 +1275,13 @@
 
         tryLuckButton.addEventListener('click', () => {
             localStorage.setItem('chapterSelections', JSON.stringify(chapterSelections));
-            localStorage.setItem('ownershipSelection', ownershipSelection);
 
             const selectedChapters = Object.keys(chapterSelections).filter(chp => chapterSelections[chp]);
             totalQuestionCount = originalItems.filter(item => {
                 if (item.chapters.length > 0 && !item.chapters.some(chp => selectedChapters.includes(chp))) {
                     return false;
                 }
-                if (item.soleOnly && ownershipSelection !== 'sole') {
-                    return false;
-                }
-                const sections = ownershipSelection === 'sole' ? item.soleSections : item.partnershipSections;
-                return sections.length > 0;
+                return item.sections.length > 0;
             }).length;
 
             totalQuestionsSpan.textContent = totalQuestionCount;
@@ -1185,54 +1321,7 @@
         });
 
         endButton.addEventListener('click', () => {
-            feedbackDiv.textContent = 'Game Over!';
-            document.querySelectorAll('.cup').forEach(cup => {
-                cup.classList.add('disappear');
-                cup.style.pointerEvents = 'none';
-                const revealImage = cup.nextElementSibling;
-                if (currentItem && currentItem.sections && currentItem.sections.includes(cup.dataset.section)) {
-                    revealImage.src = darumaImages[Math.floor(Math.random() * darumaImages.length)];
-                } else {
-                    revealImage.src = 'https://i.postimg.cc/Wz6s5m6k/monster.png';
-                }
-                revealImage.style.opacity = '1';
-            });
-            endButton.style.pointerEvents = 'none';
-            gameContent.style.display = 'none';
-            resultPage.style.display = 'block';
-            resultsContainer.style.display = 'flex';
-            resultScore.textContent = `Score: ${scoreCorrect} / ${totalQuestions}`;
-            const percentage = totalQuestions > 0 ? (scoreCorrect / totalQuestions * 100) : 0;
-            if (percentage === 100 && scoreCorrect === totalQuestionCount) {
-                endMessage.textContent = "Congrats! You are the luckiest man on earth! 🙇🏻‍♂️";
-            } else if (percentage === 100 || percentage >= 90) {
-                endMessage.textContent = "You possess almost all the Forces in the universe!";
-            } else if (percentage >= 80) {
-                endMessage.textContent = "Closer to becoming the luckiest man!";
-            } else if (percentage >= 70) {
-                endMessage.textContent = "Good job!";
-            } else if (percentage >= 50) {
-                endMessage.textContent = "Nice Try!";
-            } else {
-                endMessage.innerHTML = "Sadly, you need more practice. <br>Luck comes with hard work.";
-            }
-            correctAnswersDiv.querySelector('h3').textContent = `Congrats! You've got ${correctAnswers.length} out of ${totalQuestions} correct!`;
-            correctAnswersList.innerHTML = '';
-            correctAnswersList.innerHTML = correctAnswers.map(item => `<li>${item.name}: ${item.sections.join(', ')}</li>`).join('');
-            if (incorrectAnswers.length === 0) {
-                wrongAnswersDiv.querySelector('h3').textContent = "You missed 0. Nailed it!";
-                wrongAnswersList.innerHTML = '';
-            } else {
-                wrongAnswersDiv.querySelector('h3').innerHTML = `You missed ${incorrectAnswers.length}.<br>Can do better next time!`;
-                wrongAnswersList.innerHTML = incorrectAnswers.map(item => `
-                    <li>
-                        <strong>${item.item.name}</strong>:<br>
-                        ${item.correctSections.join(', ')}
-                    </li>
-                `).join('');
-            }
-            backgroundMusic.pause();
-            backgroundMusic.currentTime = 0;
+            showResultPage();
         });
 
         function getRandomItem(filteredItems) {
@@ -1245,71 +1334,26 @@
         }
 
         function setNewQuestion() {
+            clickCount = 0;
+            firstCorrectCup = null;
+            document.querySelectorAll('.what-else-message').forEach(msg => msg.style.display = 'none');
+
             const selectedChapters = Object.keys(chapterSelections).filter(chp => chapterSelections[chp]);
             let filteredItems = originalItems.filter(item => {
                 if (item.chapters.length > 0 && !item.chapters.some(chp => selectedChapters.includes(chp))) {
                     return false;
                 }
-                if (item.soleOnly && ownershipSelection !== 'sole') {
-                    return false;
-                }
-                const sections = ownershipSelection === 'sole' ? item.soleSections : item.partnershipSections;
-                return sections.length > 0;
+                return item.sections.length > 0;
             });
 
-            filteredItems.sort((a, b) => {
-                const isChp11And13 = chapterSelections.Chp11 && chapterSelections.Chp13;
-                if (isChp11And13) {
-                    const aIsChp13 = a.chapters.includes('Chp13') ? -2 : 0;
-                    const bIsChp13 = b.chapters.includes('Chp13') ? -2 : 0;
-                    const aIsChp11 = a.chapters.includes('Chp11') ? -1 : 0;
-                    const bIsChp11 = b.chapters.includes('Chp11') ? -1 : 0;
-                    return (aIsChp13 + aIsChp11) - (bIsChp13 + bIsChp11);
-                } else {
-                    const aIsChp11 = a.chapters.includes('Chp11') ? -2 : 0;
-                    const bIsChp11 = b.chapters.includes('Chp11') ? -2 : 0;
-                    const aIsOtherChapter = a.chapters.some(chp => ['Chp9', 'Chp10', 'Chp12'].includes(chp) && selectedChapters.includes(chp)) ? -1 : 0;
-                    const bIsOtherChapter = b.chapters.some(chp => ['Chp9', 'Chp10', 'Chp12'].includes(chp) && selectedChapters.includes(chp)) ? -1 : 0;
-                    return (aIsChp11 + aIsOtherChapter) - (bIsChp11 + bIsOtherChapter);
-                }
-            });
-
-            if (chapterSelections.Chp11 && chapterSelections.Chp13) {
-                filteredItems = filteredItems.slice(0, 50);
-            } else if (chapterSelections.Chp11) {
-                filteredItems = filteredItems.slice(0, 30);
-            } else if (selectedChapters.some(chp => ['Chp9', 'Chp10', 'Chp12'].includes(chp))) {
-                filteredItems = filteredItems.slice(0, 15);
-            }
-
-            if (chapterSelections.Chp13 && ownershipSelection === 'partnership') {
-                filteredItems.sort((a, b) => {
-                    const aIsChp13 = a.chapters.includes('Chp13') ? -1 : 1;
-                    const bIsChp13 = b.chapters.includes('Chp13') ? -1 : 1;
-                    return aIsChp13 - bIsChp13;
-                });
-                filteredItems = filteredItems.slice(0, 50);
-            }
-
-            items = filteredItems.map(item => ({
-                ...item,
-                sections: ownershipSelection === 'sole' ? item.soleSections : item.partnershipSections
-            }));
-
-            if (items.length === 0 || usedItems.size >= items.length) {
-                questionDiv.textContent = "";
-                feedbackDiv.textContent = "Game Over!";
-                document.querySelectorAll('.cup').forEach(cup => cup.style.pointerEvents = 'none');
-                endButton.style.pointerEvents = 'none';
+            if (filteredItems.length === 0 || usedItems.size >= filteredItems.length) {
+                showResultPage();
                 return;
             }
 
-            currentItem = getRandomItem(items);
+            currentItem = getRandomItem(filteredItems);
             if (!currentItem) {
-                questionDiv.textContent = "";
-                feedbackDiv.textContent = "Game Over!";
-                document.querySelectorAll('.cup').forEach(cup => cup.style.pointerEvents = 'none');
-                endButton.style.pointerEvents = 'none';
+                showResultPage();
                 return;
             }
             questionDiv.textContent = currentItem.name;
@@ -1319,7 +1363,9 @@
                 cup.style.pointerEvents = 'auto';
                 cup.style.backgroundImage = "url('https://i.postimg.cc/9QhhfXqQ/original-cup.png')";
                 const revealImage = cup.nextElementSibling;
-                revealImage.src = currentItem.sections.includes(cup.dataset.section)
+                const isCorrectSection = currentItem.sections.includes(cup.dataset.section) ||
+                                        (currentItem.alternateSections && currentItem.alternateSections.includes(cup.dataset.section));
+                revealImage.src = isCorrectSection
                     ? darumaImages[Math.floor(Math.random() * darumaImages.length)]
                     : 'https://i.postimg.cc/Wz6s5m6k/monster.png';
                 revealImage.style.opacity = '0';
@@ -1346,7 +1392,6 @@
             scoreDiv.textContent = `Score: ${scoreCorrect} / ${totalQuestions}`;
         }
 
-        // Initial cup event listeners
         cups.forEach(cup => cup.addEventListener('click', handleCupClick));
     </script>
 </body>
