@@ -17,16 +17,57 @@
             flex-direction: column;
             align-items: center;
         }
+
+        /* BAFS Logo - Fixed on Start & Game pages */
+        .bafs-logo {
+            position: fixed;
+            left: 20px;
+            bottom: 20px;
+            width: 90px;
+            border-radius: 10px;
+            z-index: 30;
+        }
+
+        /* Result Page - Logo at LEFT-MOST position */
+        .result-page .bafs-logo {
+            position: relative;
+            left: 0;
+            bottom: auto;
+            margin: 40px 0 30px 10px;   /* Very small left margin for true left-most feel */
+            display: block;
+            text-align: left;
+        }
+
+        .start-page, .game-page, .result-page {
+            position: relative;
+        }
+
+        .game-page {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+            flex: 1;
+            padding: 8px 0 100px 0;
+            position: relative;
+        }
+
+        .container {
+            width: 95%;
+            max-width: 500px;
+            margin: 0 auto;
+            position: relative;
+        }
+
         .start-page {
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: flex-start;
             min-height: 100vh;
-            padding: 2rem 1rem 120px 1rem;
+            padding: 2rem 1rem 100px 1rem;
             width: 100%;
             box-sizing: border-box;
-            position: relative;
         }
         .start-page h1 {
             font-size: 1.55rem;
@@ -48,17 +89,7 @@
             transition: transform 0.3s ease;
         }
         .start-daruma:hover { transform: scale(1.12); }
-        .bafs-logo {
-            position: absolute;
-            left: 20px;
-            width: 90px;
-            border-radius: 10px;
-            z-index: 20;
-        }
-        .start-page .bafs-logo { bottom: 20px; }
-        .game-page .bafs-logo { bottom: 20px; }
-        .result-page .bafs-logo { bottom: 20px; }
-      
+
         #instruction-modal {
             display: none;
             position: fixed;
@@ -67,7 +98,7 @@
             width: 100%;
             height: 100%;
             background: rgba(0,0,0,0.6);
-            z-index: 20;
+            z-index: 40;
             justify-content: center;
             align-items: center;
             padding: 20px;
@@ -94,22 +125,7 @@
             font-size: 1.3em;
             font-weight: bold;
         }
-      
-        .game-page {
-            display: none;
-            flex-direction: column;
-            align-items: center;
-            width: 100%;
-            flex: 1;
-            padding: 8px 0 100px;
-            position: relative;
-        }
-        .container {
-            width: 95%;
-            max-width: 500px;
-            margin: 0 auto;
-        }
-      
+
         .game-header {
             width: 100%;
             display: flex;
@@ -136,7 +152,7 @@
             text-align: center;
             width: 100%;
         }
-      
+
         #question {
             font-size: 0.95rem;
             background: white;
@@ -153,7 +169,7 @@
             color: #c93c13;
             margin-bottom: 12px;
         }
-      
+
         #cups {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
@@ -196,7 +212,7 @@
         .is-row { grid-template-columns: repeat(4, 1fr); }
         .sofp-row { grid-template-columns: repeat(5, 1fr); }
         .sofp-header { margin-top: 25px !important; }
-      
+
         .cup-container {
             cursor: pointer;
             position: relative;
@@ -230,12 +246,12 @@
             font-size: 0.8em;
             color: #333;
         }
-      
+
         .result-page {
             display: none;
             max-width: 95%;
             margin: 20px auto;
-            padding: 1rem 1rem 100px;
+            padding: 1rem 1rem 40px;
             text-align: center;
             width: 100%;
             position: relative;
@@ -255,7 +271,7 @@
             z-index: 5;
         }
         #result-daruma:hover { transform: scale(1.1); }
-      
+
         #end-message {
             font-size: 1.3em;
             margin: 25px 0;
@@ -382,6 +398,7 @@
                 <ul id="wrong-answers-list"></ul>
             </div>
         </div>
+        <!-- Logo at LEFT-MOST position on Result Page -->
         <a href="https://www.instagram.com/bafsdojo?igsh=MXhnNW9zN3JjMXJoMg%3D%3D&utm_source=qr" target="_blank">
             <img class="bafs-logo" src="https://i.postimg.cc/0yMN6650/bafs-dojo.jpg" alt="BAFS DOJO">
         </a>
@@ -390,7 +407,6 @@
     <script>
         const TOTAL_QUESTIONS = 116;
         const items = [
-            // Your full items array (unchanged)
             { item: "Bank loan", sole: "NCL", specified: "CL", isEitherOr: false },
             { item: "Deposit from customers (refundable)", sole: "CL", specified: "NCL", isEitherOr: false },
             { item: "Deposit to suppliers (refundable)", sole: "CA", specified: "NCA", isEitherOr: false },
@@ -511,7 +527,6 @@
 
         let shuffledItems = [], currentIndex = 0, score = 0, currentRound = 1, currentItem = null, sessionHistory = [];
 
-        // Audio Elements
         const bgMusic = document.getElementById('background-music');
         const correctSound = document.getElementById('correct');
         const incorrectSound = document.getElementById('incorrect');
@@ -556,15 +571,19 @@
         function createCups() {
             const cupsDiv = document.getElementById('cups');
             cupsDiv.innerHTML = '';
+
             const isHeader = document.createElement('div'); isHeader.className = 'section-header';
             isHeader.innerHTML = `<img src="https://i.postimg.cc/L4NC1CPF/name-tag.png"><div class="header-text">Income Statement</div>`;
             cupsDiv.appendChild(isHeader);
+
             const isRow = document.createElement('div'); isRow.className = 'is-row';
             ["Trading", "P&L - Other Income", "P&L - Other Expenses", "P&L - Appropriation"].forEach(cat => isRow.appendChild(createCupElement(cat)));
             cupsDiv.appendChild(isRow);
+
             const sofpHeader = document.createElement('div'); sofpHeader.className = 'section-header sofp-header';
             sofpHeader.innerHTML = `<img src="https://i.postimg.cc/L4NC1CPF/name-tag.png"><div class="header-text">Statement of Financial Position</div>`;
             cupsDiv.appendChild(sofpHeader);
+
             const sofpRow = document.createElement('div'); sofpRow.className = 'sofp-row';
             ["NCA", "CA", "C", "NCL", "CL"].forEach(cat => sofpRow.appendChild(createCupElement(cat)));
             cupsDiv.appendChild(sofpRow);
@@ -615,7 +634,6 @@
             } else {
                 surprise.src = monster;
                 playSound(incorrectSound);
-
                 const correctLabel = currentRound === 1 ? currentItem.sole : (currentItem.specified || currentItem.option1);
                 const correctCup = Array.from(document.querySelectorAll('.cup-container')).find(c => c.dataset.label === correctLabel);
                 if (correctCup) {
@@ -632,6 +650,7 @@
             currentItem = shuffledItems[currentIndex];
             currentRound = 1;
             document.getElementById('question').textContent = currentItem.item;
+
             if (currentItem.isEitherOr) {
                 document.getElementById('round-indicator').innerHTML = `<strong>Choose one classification</strong>`;
             } else if (currentItem.singleAnswer) {
@@ -639,6 +658,7 @@
             } else {
                 document.getElementById('round-indicator').innerHTML = `<strong>Normally</strong>`;
             }
+
             createCups();
             updateScoreDisplays();
         }
@@ -655,36 +675,37 @@
         function showResultPage() {
             bgMusic.pause();
             bgMusic.currentTime = 0;
-
             document.getElementById('gamePage').style.display = 'none';
             document.getElementById('resultPage').style.display = 'block';
-          
+
             const answered = getAnsweredCount() || TOTAL_QUESTIONS;
             const correctCount = score;
             const wrongCount = answered - score;
+
             document.getElementById('result-score').textContent = `Score: ${correctCount} / ${answered}`;
-            document.getElementById('correct-answers').querySelector('h3').textContent =
-                `Congrats! You've got ${correctCount} out of ${answered} correct!`;
+            document.getElementById('correct-answers').querySelector('h3').textContent = `Congrats! You've got ${correctCount} out of ${answered} correct!`;
+
             const wrongHeader = document.getElementById('wrong-answers').querySelector('h3');
             if (wrongCount === 0) {
                 wrongHeader.textContent = "You missed 0. Nailed it!";
             } else {
                 wrongHeader.innerHTML = `You missed ${wrongCount}.<br>Can do better next time!`;
             }
+
             const correctList = document.getElementById('correct-answers-list');
             const wrongListEl = document.getElementById('wrong-answers-list');
             correctList.innerHTML = '';
             wrongListEl.innerHTML = '';
+
             sessionHistory.forEach(entry => {
                 const li = document.createElement('li');
                 let displayText = `${entry.item} → ${entry.normally}`;
-                if (entry.other) {
-                    displayText += ` | ${entry.other}`;
-                }
+                if (entry.other) displayText += ` | ${entry.other}`;
                 li.textContent = displayText;
                 if (entry.status === "Correct") correctList.appendChild(li);
                 else wrongListEl.appendChild(li);
             });
+
             const percentage = answered > 0 ? Math.round((score / answered) * 100) : 0;
             let msg = percentage === 100 ? 'Perfect! You are a true BAFS Master! 🏆' :
                       percentage >= 80 ? 'Excellent work! Almost there! 💪' :
@@ -715,17 +736,13 @@
         document.getElementById('continue-button').onclick = () => {
             document.getElementById('instruction-modal').style.display = 'none';
             document.getElementById('gamePage').style.display = 'flex';
-
             shuffledItems = [...items];
             shuffle(shuffledItems);
             currentIndex = 0;
             score = 0;
             sessionHistory = [];
-
             updateScoreDisplays();
             loadQuestion();
-
-            // Start Background Music
             bgMusic.volume = 0.6;
             bgMusic.play().catch(err => console.log("Background music autoplay prevented:", err));
         };
