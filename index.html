@@ -23,9 +23,10 @@
             align-items: center; 
             justify-content: flex-start; 
             min-height: 100vh; 
-            padding: 2rem 1rem 1rem; 
+            padding: 2rem 1rem 120px 1rem; 
             width: 100%; 
             box-sizing: border-box; 
+            position: relative;
         }
         .start-page h1 { 
             font-size: 1.55rem; 
@@ -47,6 +48,17 @@
             transition: transform 0.3s ease; 
         }
         .start-daruma:hover { transform: scale(1.12); }
+
+        .bafs-logo {
+            position: absolute;
+            left: 20px;
+            width: 90px;
+            border-radius: 10px;
+            z-index: 20;
+        }
+        .start-page .bafs-logo { bottom: 20px; }
+        .game-page .bafs-logo { bottom: 20px; }
+        .result-page .bafs-logo { bottom: 20px; }
         
         #instruction-modal { 
             display: none; 
@@ -90,7 +102,7 @@
             align-items: center; 
             width: 100%; 
             flex: 1; 
-            padding: 8px 0; 
+            padding: 8px 0 100px; 
             position: relative; 
         }
         .container { 
@@ -225,7 +237,7 @@
             display: none; 
             max-width: 95%; 
             margin: 20px auto; 
-            padding: 1rem; 
+            padding: 1rem 1rem 100px; 
             text-align: center; 
             width: 100%; 
             position: relative; 
@@ -303,16 +315,6 @@
             z-index: 10; 
             font-weight: bold; 
         }
-        .logo-container { 
-            position: fixed; 
-            bottom: 20px; 
-            left: 20px; 
-            z-index: 15; 
-        }
-        .logo { 
-            width: 90px; 
-            border-radius: 10px; 
-        }
     </style>
 </head>
 <body>
@@ -320,7 +322,11 @@
         <h1>May the Force be with You</h1>
         <div class="score" id="startScore">Score: 0 / 0</div>
         <img class="start-daruma" src="https://i.postimg.cc/cC6cmTND/daruma.png" alt="Start Game" id="startDaruma">
+        <a href="https://www.instagram.com/bafsdojo?igsh=MXhnNW9zN3JjMXJoMg%3D%3D&utm_source=qr" target="_blank">
+            <img class="bafs-logo" src="https://i.postimg.cc/0yMN6650/bafs-dojo.jpg" alt="BAFS DOJO">
+        </a>
     </div>
+
     <div id="instruction-modal">
         <div class="modal-content">
             <p>Welcome to BAFS DOJO!<br>
@@ -332,6 +338,7 @@
             <button id="continue-button">Continue</button>
         </div>
     </div>
+
     <div class="game-page" id="gamePage">
         <div class="container">
             <h1 class="game-title">May the Force be with You</h1>
@@ -342,8 +349,12 @@
             <div id="question"></div>
             <div id="round-indicator"></div>
             <div id="cups"></div>
+            <a href="https://www.instagram.com/bafsdojo?igsh=MXhnNW9zN3JjMXJoMg%3D%3D&utm_source=qr" target="_blank">
+                <img class="bafs-logo" src="https://i.postimg.cc/0yMN6650/bafs-dojo.jpg" alt="BAFS DOJO">
+            </a>
         </div>
     </div>
+
     <div class="result-page" id="resultPage">
         <h1>May the Force be with You</h1>
         <img id="result-daruma" src="https://i.postimg.cc/cC6cmTND/daruma.png" alt="Restart Game">
@@ -363,17 +374,15 @@
                 <ul id="wrong-answers-list"></ul>
             </div>
         </div>
-    </div>
-    <div class="logo-container">
         <a href="https://www.instagram.com/bafsdojo?igsh=MXhnNW9zN3JjMXJoMg%3D%3D&utm_source=qr" target="_blank">
-            <img src="https://i.postimg.cc/0yMN6650/bafs-dojo.jpg" alt="BAFS Logo" class="logo">
+            <img class="bafs-logo" src="https://i.postimg.cc/0yMN6650/bafs-dojo.jpg" alt="BAFS DOJO">
         </a>
     </div>
 
     <script>
         const TOTAL_QUESTIONS = 116;
         const items = [
-            // Previous mixed questions
+            // 12 Loan/Deposit items
             { item: "Bank loan", sole: "NCL", specified: "CL", isEitherOr: false },
             { item: "Deposit from customers (refundable)", sole: "CL", specified: "NCL", isEitherOr: false },
             { item: "Deposit to suppliers (refundable)", sole: "CA", specified: "NCA", isEitherOr: false },
@@ -386,10 +395,12 @@
             { item: "Term deposit", sole: "CA", specified: "NCA", isEitherOr: false },
             { item: "Loan from Partner", sole: "NCL", specified: "CL", isEitherOr: false },
             { item: "Debentures", sole: "NCL", specified: "CL", isEitherOr: false },
+
+            // True Either-Or items
             { item: "Abnormal inventory loss", option1: "Trading", option2: "P&L - Other Expenses", isEitherOr: true },
             { item: "Inventory, as at year end", option1: "Trading", option2: "CA", isEitherOr: true },
 
-            // Single Answer Questions
+            // Single answer items (same as before)
             { item: "Accrued expenses", sole: "CL", isEitherOr: false, singleAnswer: true },
             { item: "Accrued income", sole: "CA", isEitherOr: false, singleAnswer: true },
             { item: "Accumulated Depreciation – [NCA]", sole: "NCA", isEitherOr: false, singleAnswer: true },
@@ -507,9 +518,7 @@
             } 
         }
 
-        function getAnsweredCount() { 
-            return currentIndex; 
-        }
+        function getAnsweredCount() { return currentIndex; }
 
         function updateScoreDisplays() {
             const answered = getAnsweredCount() || TOTAL_QUESTIONS;
@@ -522,20 +531,16 @@
         function createCups() {
             const cupsDiv = document.getElementById('cups'); 
             cupsDiv.innerHTML = '';
-            const isHeader = document.createElement('div'); 
-            isHeader.className = 'section-header';
+            const isHeader = document.createElement('div'); isHeader.className = 'section-header';
             isHeader.innerHTML = `<img src="https://i.postimg.cc/L4NC1CPF/name-tag.png"><div class="header-text">Income Statement</div>`;
             cupsDiv.appendChild(isHeader);
-            const isRow = document.createElement('div'); 
-            isRow.className = 'is-row';
+            const isRow = document.createElement('div'); isRow.className = 'is-row';
             ["Trading", "P&L - Other Income", "P&L - Other Expenses", "P&L - Appropriation"].forEach(cat => isRow.appendChild(createCupElement(cat)));
             cupsDiv.appendChild(isRow);
-            const sofpHeader = document.createElement('div'); 
-            sofpHeader.className = 'section-header sofp-header';
+            const sofpHeader = document.createElement('div'); sofpHeader.className = 'section-header sofp-header';
             sofpHeader.innerHTML = `<img src="https://i.postimg.cc/L4NC1CPF/name-tag.png"><div class="header-text">Statement of Financial Position</div>`;
             cupsDiv.appendChild(sofpHeader);
-            const sofpRow = document.createElement('div'); 
-            sofpRow.className = 'sofp-row';
+            const sofpRow = document.createElement('div'); sofpRow.className = 'sofp-row';
             ["NCA", "CA", "C", "NCL", "CL"].forEach(cat => sofpRow.appendChild(createCupElement(cat)));
             cupsDiv.appendChild(sofpRow);
         }
@@ -557,7 +562,8 @@
             if (currentItem.isEitherOr) {
                 isCorrect = (selectedLabel === currentItem.option1 || selectedLabel === currentItem.option2);
             } else {
-                isCorrect = (selectedLabel === currentItem.sole);
+                const correctLabel = currentRound === 1 ? currentItem.sole : currentItem.specified;
+                isCorrect = (selectedLabel === correctLabel);
             }
 
             const surprise = selectedContainer.querySelector('.surprise');
@@ -568,7 +574,7 @@
             if (isCorrect) {
                 surprise.src = darumas[Math.floor(Math.random() * darumas.length)];
 
-                if (currentItem.isEitherOr && currentRound === 1) {
+                if (currentRound === 1 && (currentItem.isEitherOr || currentItem.specified)) {
                     setTimeout(() => {
                         currentRound = 2;
                         document.getElementById('round-indicator').innerHTML = `<strong>Any other possibilities?</strong>`;
@@ -577,19 +583,19 @@
                 } else {
                     score++;
                     updateScoreDisplays();
-                    sessionHistory.push({item: currentItem.item, normally: currentItem.sole || currentItem.option1, other: currentItem.option2 || "", status: "Correct"});
+                    sessionHistory.push({item: currentItem.item, normally: currentItem.sole || currentItem.option1, other: currentItem.specified || currentItem.option2 || "", status: "Correct"});
                     setTimeout(nextQuestion, 1400);
                 }
             } else {
                 surprise.src = monster;
-                const correctLabel = currentItem.isEitherOr ? currentItem.option1 : currentItem.sole;
+                const correctLabel = currentRound === 1 ? currentItem.sole : (currentItem.specified || currentItem.option1);
                 const correctCup = Array.from(document.querySelectorAll('.cup-container')).find(c => c.dataset.label === correctLabel);
                 if (correctCup) {
                     correctCup.classList.add('toggled', 'revealed');
                     correctCup.querySelector('.cup').src = toggledCup;
                     correctCup.querySelector('.surprise').src = darumas[Math.floor(Math.random() * darumas.length)];
                 }
-                sessionHistory.push({item: currentItem.item, normally: currentItem.sole || currentItem.option1, other: currentItem.option2 || "", status: "Wrong"});
+                sessionHistory.push({item: currentItem.item, normally: currentItem.sole || currentItem.option1, other: currentItem.specified || currentItem.option2 || "", status: "Wrong"});
                 setTimeout(nextQuestion, 2200);
             }
         }
@@ -647,7 +653,11 @@
 
             sessionHistory.forEach(entry => {
                 const li = document.createElement('li');
-                li.textContent = `${entry.item} → ${entry.normally}`;
+                let displayText = `${entry.item} → ${entry.normally}`;
+                if (entry.other) {
+                    displayText += ` | ${entry.other}`;
+                }
+                li.textContent = displayText;
                 if (entry.status === "Correct") correctList.appendChild(li);
                 else wrongListEl.appendChild(li);
             });
