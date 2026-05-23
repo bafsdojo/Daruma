@@ -6,163 +6,86 @@
     <title>BAFS DOJO - Accounting Cup Game</title>
     <link href="https://fonts.googleapis.com/css2?family=Bai+Jamjuree:wght@400;600&family=Noto+Sans+TC:wght@400;700&display=swap" rel="stylesheet">
     <style>
-        body {
-            font-family: 'Bai Jamjuree', 'Noto Sans TC', sans-serif;
-            background-color: #f3ecd9;
-            margin: 0;
-            padding: 0;
-            text-align: center;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-        .start-page {
-            display: flex; flex-direction: column; align-items: center; justify-content: flex-start;
-            min-height: 100vh; padding: 2rem 1rem 1rem; width: 100%; box-sizing: border-box;
-        }
-        .start-page h1, .result-page h1 { 
-            font-size: 1.55rem; color: #e68434; margin-bottom: 1.5rem; 
-        }
-        .score { font-size: 1.1rem; background-color: white; padding: 0.6rem 1.2rem; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.15); display: inline-block; margin: 1rem auto 2rem; }
-        .start-button { width: 80vw; max-width: 320px; cursor: pointer; transition: transform 0.3s ease; }
-        .start-button:hover { transform: scale(1.08); }
-
-        #instruction-modal {
-            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.6); z-index: 20; justify-content: center; align-items: center; padding: 20px;
-        }
-        .modal-content {
-            background-color: #c93c13; color: #fff; padding: 30px 20px; border-radius: 15px;
-            max-width: 90%; text-align: center; font-size: 1.15em; line-height: 1.8; box-shadow: 0 10px 30px rgba(0,0,0,0.4);
-        }
+        body { font-family: 'Bai Jamjuree', 'Noto Sans TC', sans-serif; background-color: #f3ecd9; margin: 0; padding: 0; text-align: center; min-height: 100vh; display: flex; flex-direction: column; align-items: center; }
+        .start-page { display: flex; flex-direction: column; align-items: center; justify-content: flex-start; min-height: 100vh; padding: 2rem 1rem 1rem; width: 100%; box-sizing: border-box; }
+        .start-page h1 { font-size: 1.55rem; color: #e68434; margin-bottom: 1.2rem; }
+        .score { font-size: 1.1rem; background-color: white; padding: 0.6rem 1.2rem; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.15); margin-bottom: 2rem; width: fit-content; }
+        .start-daruma { width: 130px; cursor: pointer; transition: transform 0.3s ease; }
+        .start-daruma:hover { transform: scale(1.12); }
+        #instruction-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 20; justify-content: center; align-items: center; padding: 20px; }
+        .modal-content { background-color: #c93c13; color: #fff; padding: 30px 20px; border-radius: 15px; max-width: 90%; text-align: center; font-size: 1.15em; line-height: 1.8; box-shadow: 0 10px 30px rgba(0,0,0,0.4); }
         #continue-button { margin-top: 30px; padding: 14px 40px; background-color: #f3ecdc; color: #c93c13; border: none; border-radius: 50px; cursor: pointer; font-size: 1.3em; font-weight: bold; }
-
-        .game-page { 
-            display: none; flex-direction: column; align-items: center; width: 100%; flex: 1; 
-            padding: 8px 0; position: relative; 
-        }
+        .game-page { display: none; flex-direction: column; align-items: center; width: 100%; flex: 1; padding: 8px 0; position: relative; }
         .container { width: 95%; max-width: 500px; margin: 0 auto; }
-        
-        .game-header {
-            width: 100%; display: flex; flex-direction: column; align-items: center; position: relative;
-        }
-        h1.game-title { 
-            color: #e68434; margin: 8px 0 6px; font-size: 1.45rem;
-        }
-        .exit-button { 
-            width: 40px; height: 40px; cursor: pointer; opacity: 0.9; align-self: flex-end; margin-right: 15px;
-        }
-
-        .game-score { font-size: 0.9rem; background-color: white; padding: 0.4rem 0.8rem; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.15); margin-bottom: 8px; }
-        
-        #question {
-            font-size: 0.95rem; background: white; padding: 0.6rem 0.8rem; border-radius: 8px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.15); margin: 10px auto; width: fit-content; max-width: 100%;
-        }
-        
+        .game-header { width: 100%; display: flex; justify-content: space-between; align-items: center; padding: 0 15px; margin: 8px 0; }
+        h1.game-title { color: #e68434; margin: 10px 0 8px; font-size: 1.45rem; text-align: center; width: 100%; }
+        .exit-button { width: 40px; height: 40px; cursor: pointer; opacity: 0.9; }
+        #question { font-size: 0.95rem; background: white; padding: 0.6rem 0.8rem; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.15); margin: 8px auto 12px; width: fit-content; max-width: 100%; }
+        #round-indicator { font-size: 1.05rem; font-weight: bold; color: #c93c13; margin-bottom: 12px; }
         #cups { display: grid; grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); gap: 12px; margin: 0; }
-        .section-header {
-            grid-column: 1 / -1; text-align: center; margin: 12px 0 0; position: relative; height: 34px;
-        }
-        .section-header img {
-            width: 96%; max-width: 480px; height: auto; 
-            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(1, 0.6);
-        }
-        .section-header .header-text {
-            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-            font-weight: bold; font-size: 1.0em; color: #333; white-space: nowrap; z-index: 1;
-        }
+        .section-header { grid-column: 1 / -1; text-align: center; margin: 12px 0 0; position: relative; height: 34px; }
+        .section-header img { width: 96%; max-width: 480px; height: auto; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(1, 0.6); }
+        .section-header .header-text { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-weight: bold; font-size: 1.0em; color: #333; white-space: nowrap; z-index: 1; }
         .is-row, .sofp-row { grid-column: 1 / -1; display: grid; gap: 12px; margin: 0; }
         .is-row { grid-template-columns: repeat(4, 1fr); }
         .sofp-row { grid-template-columns: repeat(5, 1fr); }
-        
+        .sofp-header { margin-top: 25px !important; }
         .cup-container { cursor: pointer; position: relative; display: flex; flex-direction: column; align-items: center; }
         .cup-container img.cup { width: 100%; max-width: 110px; height: 125px; object-fit: contain; transition: transform 0.8s ease; }
         .cup-container.toggled img.cup { transform: translate(50px, -50px) rotate(20deg); }
-        .category-label { margin-top: 6px; font-size: 0.8em; color: #333; }
-        .surprise { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 80px; opacity: 0; transition: opacity 0.9s ease 0.4s; }
+        .surprise { position: absolute; top: 48%; left: 50%; transform: translate(-50%, -50%); width: 55px; opacity: 0; transition: opacity 0.9s ease 0.4s; z-index: 1; }
         .cup-container.revealed .surprise { opacity: 1; }
-
-        /* Result Page */
-        .result-page { 
-            display: none; max-width: 95%; margin: 20px auto; padding: 1rem; text-align: center; width: 100%; position: relative;
-        }
+        .category-label { margin-top: 6px; font-size: 0.8em; color: #333; }
+        .result-page { display: none; max-width: 95%; margin: 20px auto; padding: 1rem; text-align: center; width: 100%; position: relative; }
+        .result-page h1 { font-size: 1.55rem; color: #e68434; margin: 20px 0 15px; white-space: nowrap; }
+        #result-daruma { position: absolute; top: 78px; left: 25px; width: 85px; cursor: pointer; z-index: 5; }
+        #result-daruma:hover { transform: scale(1.1); }
         #end-message { font-size: 1.3em; margin: 25px 0; font-weight: 600; color: #c93c13; }
-        #results-container { 
-            display: flex; justify-content: center; gap: 20px; flex-wrap: wrap; margin: 30px 0; 
-        }
-        .answer-box {
-            background: white; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-            padding: 20px; width: 100%; max-width: 420px; min-height: 280px; text-align: left; position: relative;
-        }
-        .answer-box h3 { color: #e68434; margin-top: 0; }
+        #results-container { display: flex; justify-content: center; gap: 20px; flex-wrap: wrap; margin: 30px 0; }
+        .answer-box { background: white; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); padding: 20px; width: 100%; max-width: 420px; min-height: 280px; text-align: left; position: relative; }
+        .answer-box h3 { color: #e68434; margin-top: 0; font-size: 1.25em; }
         .answer-box ul { padding-left: 20px; max-height: 240px; overflow-y: auto; }
         .copy-icon { position: absolute; top: 12px; right: 12px; width: 24px; height: 24px; cursor: pointer; opacity: 0.6; }
         .copy-icon:hover { opacity: 1; }
-        .copy-feedback {
-            position: absolute; top: 45px; right: 10px; background: rgba(0,0,0,0.85); color: white;
-            padding: 6px 14px; border-radius: 6px; font-size: 0.9em; display: none; z-index: 10;
-        }
-
-        /* Red Daruma Restart Button */
-        #restart-daruma {
-            position: absolute;
-            top: 20px;
-            left: 20px;
-            width: 75px;
-            cursor: pointer;
-            transition: transform 0.3s ease;
-            z-index: 10;
-        }
-        #restart-daruma:hover {
-            transform: scale(1.15);
-        }
-
+        .copy-feedback { position: absolute; top: 45px; right: 10px; background: rgba(0,0,0,0.9); color: white; padding: 8px 16px; border-radius: 6px; font-size: 0.95em; display: none; z-index: 10; font-weight: bold; }
         .logo-container { position: fixed; bottom: 20px; left: 20px; z-index: 15; }
         .logo { width: 90px; border-radius: 10px; }
     </style>
 </head>
 <body>
-
     <div class="start-page" id="startPage">
         <h1>May the Force be with You</h1>
         <div class="score" id="startScore">Score: 0 / 0</div>
-        <img class="start-button" src="https://i.postimg.cc/cC6cmTND/daruma.png" alt="Start Button" id="startButton">
+        <img class="start-daruma" src="https://i.postimg.cc/cC6cmTND/daruma.png" alt="Start Game" id="startDaruma">
     </div>
-
     <div id="instruction-modal">
         <div class="modal-content">
             <p>Welcome to BAFS DOJO!<br>
             Apart from skill, <br> LUCK also plays a crucial role<br> in turning dreams into reality.<br><br>
             Classify accounting items into the <br> correct sections in Financial Statements.<br>
-            Flip the right cups to find <br><strong><u>all <span id="total-questions">11</span> Darumas</u></strong>!<br><br>
+            Flip the right cups to find <br><strong><u>all <span id="total-questions">116</span> Darumas</u></strong>!<br><br>
             Practice makes perfect!<br>
             May LUCK be your faithful companion <br>on every journey you embark on.</p>
             <button id="continue-button">Continue</button>
         </div>
     </div>
-
     <div class="game-page" id="gamePage">
         <div class="container">
+            <h1 class="game-title">May the Force be with You</h1>
             <div class="game-header">
-                <h1 class="game-title">May the Force be with You</h1>
+                <div class="score game-score" id="gameScore">Score: 0 / 116</div>
                 <img class="exit-button" src="https://i.postimg.cc/gJ2qDd9y/exit.webpc" alt="Exit" id="exitButton">
             </div>
-            <div class="score game-score" id="gameScore">Score: 0 / 11</div>
             <div id="question"></div>
+            <div id="round-indicator"></div>
             <div id="cups"></div>
-            <div id="result"></div>
         </div>
     </div>
-
     <div class="result-page" id="resultPage">
-        <img id="restart-daruma" src="https://i.postimg.cc/c6rQYdZY/daruma-orange.png" alt="Restart Game">
-        
         <h1>May the Force be with You</h1>
-        <div class="score" id="result-score">Score: 0 / 11</div>
+        <img id="result-daruma" src="https://i.postimg.cc/cC6cmTND/daruma.png" alt="Restart Game">
+        <div class="score" id="result-score">Score: 0 / 116</div>
         <div id="end-message"></div>
-        
         <div id="results-container">
             <div class="answer-box" id="correct-answers">
                 <h3>Correct Answers</h3>
@@ -178,7 +101,6 @@
             </div>
         </div>
     </div>
-
     <div class="logo-container">
         <a href="https://www.instagram.com/bafsdojo?igsh=MXhnNW9zN3JjMXJoMg%3D%3D&utm_source=qr" target="_blank">
             <img src="https://i.postimg.cc/0yMN6650/bafs-dojo.jpg" alt="BAFS Logo" class="logo">
@@ -186,52 +108,166 @@
     </div>
 
     <script>
-        const TOTAL_QUESTIONS = 11;
+        const TOTAL_QUESTIONS = 116;
         const items = [
-            { item: "Bank loan", sole: "NCL", specified: "CL" },
-            { item: "Deposit from customers (refundable)", sole: "CL", specified: "NCL" },
-            { item: "Deposit to suppliers (refundable)", sole: "CA", specified: "NCA" },
-            { item: "Fixed deposit", sole: "CA", specified: "NCA" },
-            { item: "Loan from C", sole: "NCL", specified: "CL" },
-            { item: "Loan to D", sole: "NCA", specified: "CA" },
-            { item: "Rental deposit from tenants", sole: "CL", specified: "NCL" },
-            { item: "Rental deposit to landlords", sole: "CA", specified: "NCA" },
-            { item: "Time deposit", sole: "CA", specified: "NCA" },
-            { item: "Term deposit", sole: "CA", specified: "NCA" },
-            { item: "Loan from Partner", sole: "NCL", specified: "CL" }
+            // Previous mixed questions
+            { item: "Bank loan", sole: "NCL", specified: "CL", isEitherOr: false },
+            { item: "Deposit from customers (refundable)", sole: "CL", specified: "NCL", isEitherOr: false },
+            { item: "Deposit to suppliers (refundable)", sole: "CA", specified: "NCA", isEitherOr: false },
+            { item: "Fixed deposit", sole: "CA", specified: "NCA", isEitherOr: false },
+            { item: "Loan from C", sole: "NCL", specified: "CL", isEitherOr: false },
+            { item: "Loan to D", sole: "NCA", specified: "CA", isEitherOr: false },
+            { item: "Rental deposit from tenants", sole: "CL", specified: "NCL", isEitherOr: false },
+            { item: "Rental deposit to landlords", sole: "CA", specified: "NCA", isEitherOr: false },
+            { item: "Time deposit", sole: "CA", specified: "NCA", isEitherOr: false },
+            { item: "Term deposit", sole: "CA", specified: "NCA", isEitherOr: false },
+            { item: "Loan from Partner", sole: "NCL", specified: "CL", isEitherOr: false },
+            { item: "Debentures", sole: "NCL", specified: "CL", isEitherOr: false },
+            { item: "Abnormal inventory loss", option1: "Trading", option2: "P&L - Other Expenses", isEitherOr: true },
+            { item: "Inventory, as at year end", option1: "Trading", option2: "CA", isEitherOr: true },
+
+            // === NEW SINGLE ANSWER QUESTIONS ===
+            { item: "Accrued expenses", sole: "CL", isEitherOr: false, singleAnswer: true },
+            { item: "Accrued income", sole: "CA", isEitherOr: false, singleAnswer: true },
+            { item: "Accumulated Depreciation – [NCA]", sole: "NCA", isEitherOr: false, singleAnswer: true },
+            { item: "Administrative expenses", sole: "P&L - Other Expenses", isEitherOr: false, singleAnswer: true },
+            { item: "Advertising", sole: "P&L - Other Expenses", isEitherOr: false, singleAnswer: true },
+            { item: "Allowance for doubtful accounts", sole: "CA", isEitherOr: false, singleAnswer: true },
+            { item: "Allowance for doubtful debts", sole: "CA", isEitherOr: false, singleAnswer: true },
+            { item: "Bad debts", sole: "P&L - Other Expenses", isEitherOr: false, singleAnswer: true },
+            { item: "Bank", sole: "CA", isEitherOr: false, singleAnswer: true },
+            { item: "Bank charges", sole: "P&L - Other Expenses", isEitherOr: false, singleAnswer: true },
+            { item: "Bank interest income", sole: "P&L - Other Income", isEitherOr: false, singleAnswer: true },
+            { item: "Bank overdraft", sole: "CL", isEitherOr: false, singleAnswer: true },
+            { item: "Buildings", sole: "NCA", isEitherOr: false, singleAnswer: true },
+            { item: "Capital", sole: "C", isEitherOr: false, singleAnswer: true },
+            { item: "Carriage inwards", sole: "Trading", isEitherOr: false, singleAnswer: true },
+            { item: "Carriage outwards", sole: "P&L - Other Expenses", isEitherOr: false, singleAnswer: true },
+            { item: "Cash", sole: "CA", isEitherOr: false, singleAnswer: true },
+            { item: "Cleaning", sole: "P&L - Other Expenses", isEitherOr: false, singleAnswer: true },
+            { item: "Commissions expenses", sole: "P&L - Other Expenses", isEitherOr: false, singleAnswer: true },
+            { item: "Commissions income", sole: "P&L - Other Income", isEitherOr: false, singleAnswer: true },
+            { item: "Decrease in bad debts", sole: "P&L - Other Income", isEitherOr: false, singleAnswer: true },
+            { item: "Depreciation – [NCA]", sole: "P&L - Other Expenses", isEitherOr: false, singleAnswer: true },
+            { item: "Discounts allowed", sole: "P&L - Other Expenses", isEitherOr: false, singleAnswer: true },
+            { item: "Discounts received", sole: "P&L - Other Income", isEitherOr: false, singleAnswer: true },
+            { item: "Drawings (in sole proprietorship)", sole: "C", isEitherOr: false, singleAnswer: true },
+            { item: "Electricity", sole: "P&L - Other Expenses", isEitherOr: false, singleAnswer: true },
+            { item: "Fixtures and fittings", sole: "NCA", isEitherOr: false, singleAnswer: true },
+            { item: "General expenses", sole: "P&L - Other Expenses", isEitherOr: false, singleAnswer: true },
+            { item: "Sundry expenses", sole: "P&L - Other Expenses", isEitherOr: false, singleAnswer: true },
+            { item: "Office expenses", sole: "P&L - Other Expenses", isEitherOr: false, singleAnswer: true },
+            { item: "Miscellaneous expenses", sole: "P&L - Other Expenses", isEitherOr: false, singleAnswer: true },
+            { item: "Heating and lighting", sole: "P&L - Other Expenses", isEitherOr: false, singleAnswer: true },
+            { item: "Insurance", sole: "P&L - Other Expenses", isEitherOr: false, singleAnswer: true },
+            { item: "Insurance compensation receivables", sole: "CA", isEitherOr: false, singleAnswer: true },
+            { item: "Interest on deposit", sole: "P&L - Other Income", isEitherOr: false, singleAnswer: true },
+            { item: "Interest on [loan from A]", sole: "P&L - Other Expenses", isEitherOr: false, singleAnswer: true },
+            { item: "Interest on [loan to B]", sole: "P&L - Other Income", isEitherOr: false, singleAnswer: true },
+            { item: "Interest on overdraft", sole: "P&L - Other Expenses", isEitherOr: false, singleAnswer: true },
+            { item: "Internet charges", sole: "P&L - Other Expenses", isEitherOr: false, singleAnswer: true },
+            { item: "Inventory, as at year start", sole: "Trading", isEitherOr: false, singleAnswer: true },
+            { item: "Land", sole: "NCA", isEitherOr: false, singleAnswer: true },
+            { item: "Loan interest expenses", sole: "P&L - Other Expenses", isEitherOr: false, singleAnswer: true },
+            { item: "Long-term investments", sole: "NCA", isEitherOr: false, singleAnswer: true },
+            { item: "Loss on disposal of [NCA]", sole: "P&L - Other Expenses", isEitherOr: false, singleAnswer: true },
+            { item: "Machinery", sole: "NCA", isEitherOr: false, singleAnswer: true },
+            { item: "Management fees", sole: "P&L - Other Expenses", isEitherOr: false, singleAnswer: true },
+            { item: "Motor expenses", sole: "P&L - Other Expenses", isEitherOr: false, singleAnswer: true },
+            { item: "Motor repairs", sole: "P&L - Other Expenses", isEitherOr: false, singleAnswer: true },
+            { item: "Motor vehicles", sole: "NCA", isEitherOr: false, singleAnswer: true },
+            { item: "Net loss (in sole proprietorship)", sole: "C", isEitherOr: false, singleAnswer: true },
+            { item: "Net profit (in sole proprietorship)", sole: "C", isEitherOr: false, singleAnswer: true },
+            { item: "New capital contribution (in sole proprietorship)", sole: "C", isEitherOr: false, singleAnswer: true },
+            { item: "Net loss (in partnership)", sole: "P&L - Appropriation", isEitherOr: false, singleAnswer: true },
+            { item: "Net profit (in partnership)", sole: "P&L - Appropriation", isEitherOr: false, singleAnswer: true },
+            { item: "Office equipment", sole: "NCA", isEitherOr: false, singleAnswer: true },
+            { item: "Other payables", sole: "CL", isEitherOr: false, singleAnswer: true },
+            { item: "Other receivables", sole: "CA", isEitherOr: false, singleAnswer: true },
+            { item: "Postages", sole: "P&L - Other Expenses", isEitherOr: false, singleAnswer: true },
+            { item: "Premises", sole: "NCA", isEitherOr: false, singleAnswer: true },
+            { item: "Prepaid expenses", sole: "CA", isEitherOr: false, singleAnswer: true },
+            { item: "Printing and stationery", sole: "P&L - Other Expenses", isEitherOr: false, singleAnswer: true },
+            { item: "Profit on disposal of [NCA]", sole: "P&L - Other Income", isEitherOr: false, singleAnswer: true },
+            { item: "Purchases", sole: "Trading", isEitherOr: false, singleAnswer: true },
+            { item: "Purchases returns", sole: "Trading", isEitherOr: false, singleAnswer: true },
+            { item: "Rent and rates", sole: "P&L - Other Expenses", isEitherOr: false, singleAnswer: true },
+            { item: "Rental income", sole: "P&L - Other Income", isEitherOr: false, singleAnswer: true },
+            { item: "Repairs and maintenance", sole: "P&L - Other Expenses", isEitherOr: false, singleAnswer: true },
+            { item: "Returns inwards", sole: "Trading", isEitherOr: false, singleAnswer: true },
+            { item: "Returns outwards", sole: "Trading", isEitherOr: false, singleAnswer: true },
+            { item: "Revenue", sole: "Trading", isEitherOr: false, singleAnswer: true },
+            { item: "Revenue returns", sole: "Trading", isEitherOr: false, singleAnswer: true },
+            { item: "Sales", sole: "Trading", isEitherOr: false, singleAnswer: true },
+            { item: "Sales returns", sole: "Trading", isEitherOr: false, singleAnswer: true },
+            { item: "Selling and distribution costs", sole: "P&L - Other Expenses", isEitherOr: false, singleAnswer: true },
+            { item: "Short-term investments", sole: "CA", isEitherOr: false, singleAnswer: true },
+            { item: "Staff welfare and entertainment", sole: "P&L - Other Expenses", isEitherOr: false, singleAnswer: true },
+            { item: "Telecommunications", sole: "P&L - Other Expenses", isEitherOr: false, singleAnswer: true },
+            { item: "Telephone", sole: "P&L - Other Expenses", isEitherOr: false, singleAnswer: true },
+            { item: "Trade payables", sole: "CL", isEitherOr: false, singleAnswer: true },
+            { item: "Trade receivables", sole: "CA", isEitherOr: false, singleAnswer: true },
+            { item: "Travelling", sole: "P&L - Other Expenses", isEitherOr: false, singleAnswer: true },
+            { item: "Unearned income", sole: "CL", isEitherOr: false, singleAnswer: true },
+            { item: "Utilities", sole: "P&L - Other Expenses", isEitherOr: false, singleAnswer: true },
+            { item: "Wages and salaries", sole: "P&L - Other Expenses", isEitherOr: false, singleAnswer: true },
+            { item: "Water", sole: "P&L - Other Expenses", isEitherOr: false, singleAnswer: true },
+            { item: "Gain on disposal of [NCA]", sole: "P&L - Other Income", isEitherOr: false, singleAnswer: true },
+            { item: "Interest on drawings", sole: "P&L - Appropriation", isEitherOr: false, singleAnswer: true },
+            { item: "Interest on capital", sole: "P&L - Appropriation", isEitherOr: false, singleAnswer: true },
+            { item: "Partner’s salary", sole: "P&L - Appropriation", isEitherOr: false, singleAnswer: true },
+            { item: "Share of profit", sole: "P&L - Appropriation", isEitherOr: false, singleAnswer: true },
+            { item: "Share of loss", sole: "P&L - Appropriation", isEitherOr: false, singleAnswer: true },
+            { item: "Capital – [Partner]", sole: "C", isEitherOr: false, singleAnswer: true },
+            { item: "Current – [Partner]", sole: "C", isEitherOr: false, singleAnswer: true },
+            { item: "Interest on [loan from Partner]", sole: "P&L - Other Expenses", isEitherOr: false, singleAnswer: true },
+            { item: "Retained earnings", sole: "C", isEitherOr: false, singleAnswer: true },
+            { item: "Retained profits", sole: "C", isEitherOr: false, singleAnswer: true },
+            { item: "General reserve", sole: "C", isEitherOr: false, singleAnswer: true },
+            { item: "Ordinary share applicants", sole: "CL", isEitherOr: false, singleAnswer: true },
+            { item: "Ordinary share capital", sole: "C", isEitherOr: false, singleAnswer: true },
+            { item: "Debenture applicants", sole: "CL", isEitherOr: false, singleAnswer: true },
+            { item: "Ordinary dividends payables", sole: "CL", isEitherOr: false, singleAnswer: true },
+            { item: "Debenture interest", sole: "P&L - Other Expenses", isEitherOr: false, singleAnswer: true }
         ];
 
-        let shuffledItems = [], currentIndex = 0, score = 0, currentRound = 1, currentItem = null, firstCorrectCup = null, sessionHistory = [];
-
+        let shuffledItems = [], currentIndex = 0, score = 0, currentRound = 1, currentItem = null, sessionHistory = [];
         const originalCup = "https://i.postimg.cc/J0W13YJ8/original-cup.png";
         const toggledCup = "https://i.postimg.cc/FRSrLXYG/toggled-cup.png";
         const darumas = ["https://i.postimg.cc/8F4hd5jd/daruma-black.png","https://i.postimg.cc/ZBq6wSdG/daruma-blue.png","https://i.postimg.cc/JHDZW5KK/daruma-green.png","https://i.postimg.cc/c6rQYdZY/daruma-orange.png","https://i.postimg.cc/ZBDpgMPC/daruma-pink.png","https://i.postimg.cc/YjZQzTqP/daruma-yellow.png","https://i.postimg.cc/cC6cmTND/daruma.png"];
         const monster = "https://i.postimg.cc/Wz6s5m6k/monster.png";
 
-        function shuffle(array) { for (let i = array.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [array[i], array[j]] = [array[j], array[i]]; } }
+        function shuffle(array) { 
+            for (let i = array.length - 1; i > 0; i--) { 
+                const j = Math.floor(Math.random() * (i + 1)); 
+                [array[i], array[j]] = [array[j], array[i]]; 
+            } 
+        }
+
+        function getAnsweredCount() {
+            return currentIndex;
+        }
 
         function updateScoreDisplays() {
-            const text = `Score: ${score} / ${TOTAL_QUESTIONS}`;
+            const answered = getAnsweredCount() || TOTAL_QUESTIONS;
+            const text = `Score: ${score} / ${answered}`;
             document.getElementById('startScore').textContent = text;
             document.getElementById('gameScore').textContent = text;
             document.getElementById('result-score').textContent = text;
         }
 
         function createCups() {
-            const cupsDiv = document.getElementById('cups'); cupsDiv.innerHTML = '';
-
+            const cupsDiv = document.getElementById('cups'); 
+            cupsDiv.innerHTML = '';
             const isHeader = document.createElement('div'); isHeader.className = 'section-header';
             isHeader.innerHTML = `<img src="https://i.postimg.cc/L4NC1CPF/name-tag.png"><div class="header-text">Income Statement</div>`;
             cupsDiv.appendChild(isHeader);
-
             const isRow = document.createElement('div'); isRow.className = 'is-row';
             ["Trading", "P&L - Other Income", "P&L - Other Expenses", "P&L - Appropriation"].forEach(cat => isRow.appendChild(createCupElement(cat)));
             cupsDiv.appendChild(isRow);
-
-            const sofpHeader = document.createElement('div'); sofpHeader.className = 'section-header';
+            const sofpHeader = document.createElement('div'); sofpHeader.className = 'section-header sofp-header';
             sofpHeader.innerHTML = `<img src="https://i.postimg.cc/L4NC1CPF/name-tag.png"><div class="header-text">Statement of Financial Position</div>`;
             cupsDiv.appendChild(sofpHeader);
-
             const sofpRow = document.createElement('div'); sofpRow.className = 'sofp-row';
             ["NCA", "CA", "C", "NCL", "CL"].forEach(cat => sofpRow.appendChild(createCupElement(cat)));
             cupsDiv.appendChild(sofpRow);
@@ -248,46 +284,46 @@
 
         function selectCup(selectedContainer) {
             document.querySelectorAll('.cup-container').forEach(c => c.style.pointerEvents = 'none');
-
             const selectedLabel = selectedContainer.dataset.label;
-            const correctLabel = currentRound === 1 ? currentItem.sole : currentItem.specified;
-            const isCorrect = selectedLabel === correctLabel;
+
+            let isCorrect = false;
+
+            if (currentItem.isEitherOr) {
+                isCorrect = (selectedLabel === currentItem.option1 || selectedLabel === currentItem.option2);
+            } else {
+                isCorrect = (selectedLabel === currentItem.sole);
+            }
 
             const surprise = selectedContainer.querySelector('.surprise');
             const cupImg = selectedContainer.querySelector('.cup');
-
             selectedContainer.classList.add('toggled', 'revealed');
             cupImg.src = toggledCup;
 
             if (isCorrect) {
                 surprise.src = darumas[Math.floor(Math.random() * darumas.length)];
-                document.getElementById('result').innerHTML = `<span style="color:green">✓ Correct!</span>`;
 
-                if (currentRound === 1) {
-                    firstCorrectCup = selectedContainer;
+                if (currentItem.isEitherOr && currentRound === 1) {
                     setTimeout(() => {
                         currentRound = 2;
-                        document.getElementById('result').innerHTML = `<strong>Any other possibilities?</strong>`;
+                        document.getElementById('round-indicator').innerHTML = `<strong>Any other possibilities?</strong>`;
                         document.querySelectorAll('.cup-container').forEach(c => c.style.pointerEvents = 'auto');
                     }, 1300);
                 } else {
                     score++;
                     updateScoreDisplays();
-                    sessionHistory.push({item: currentItem.item, normally: currentItem.sole, other: currentItem.specified, status: "Correct"});
+                    sessionHistory.push({item: currentItem.item, normally: currentItem.sole || currentItem.option1, other: currentItem.option2 || "", status: "Correct"});
                     setTimeout(nextQuestion, 1400);
                 }
             } else {
                 surprise.src = monster;
-                document.getElementById('result').innerHTML = `<span style="color:red">✗ Wrong</span>`;
-
+                const correctLabel = currentItem.isEitherOr ? currentItem.option1 : currentItem.sole;
                 const correctCup = Array.from(document.querySelectorAll('.cup-container')).find(c => c.dataset.label === correctLabel);
                 if (correctCup) {
                     correctCup.classList.add('toggled', 'revealed');
                     correctCup.querySelector('.cup').src = toggledCup;
                     correctCup.querySelector('.surprise').src = darumas[Math.floor(Math.random() * darumas.length)];
                 }
-
-                sessionHistory.push({item: currentItem.item, normally: currentItem.sole, other: currentItem.specified, status: "Wrong"});
+                sessionHistory.push({item: currentItem.item, normally: currentItem.sole || currentItem.option1, other: currentItem.option2 || "", status: "Wrong"});
                 setTimeout(nextQuestion, 2200);
             }
         }
@@ -295,10 +331,18 @@
         function loadQuestion() {
             currentItem = shuffledItems[currentIndex];
             currentRound = 1;
-            firstCorrectCup = null;
             document.getElementById('question').textContent = currentItem.item;
-            document.getElementById('result').innerHTML = `<strong>Normally</strong>`;
+
+            if (currentItem.isEitherOr) {
+                document.getElementById('round-indicator').innerHTML = `<strong>Choose one classification</strong>`;
+            } else if (currentItem.singleAnswer) {
+                document.getElementById('round-indicator').innerHTML = `<strong>Select the correct section</strong>`;
+            } else {
+                document.getElementById('round-indicator').innerHTML = `<strong>Normally</strong>`;
+            }
+
             createCups();
+            updateScoreDisplays();
         }
 
         function nextQuestion() {
@@ -313,23 +357,40 @@
         function showResultPage() {
             document.getElementById('gamePage').style.display = 'none';
             document.getElementById('resultPage').style.display = 'block';
+            
+            const answered = getAnsweredCount() || TOTAL_QUESTIONS;
+            const correctCount = score;
+            const wrongCount = answered - score;
 
-            const percentage = Math.round((score / TOTAL_QUESTIONS) * 100);
-            let msg = percentage === 100 ? 'Perfect! You are a true BAFS Master! 🏆' :
-                      percentage >= 80 ? 'Excellent work! Almost there! 💪' :
-                      percentage >= 60 ? 'Good effort! Keep practicing! 🌟' : 
-                      'Keep trying! Luck and skill will come! 🍀';
-            document.getElementById('end-message').textContent = msg;
+            document.getElementById('result-score').textContent = `Score: ${correctCount} / ${answered}`;
+
+            document.getElementById('correct-answers').querySelector('h3').textContent =
+                `Congrats! You've got ${correctCount} out of ${answered} correct!`;
+
+            const wrongHeader = document.getElementById('wrong-answers').querySelector('h3');
+            if (wrongCount === 0) {
+                wrongHeader.textContent = "You missed 0. Nailed it!";
+            } else {
+                wrongHeader.innerHTML = `You missed ${wrongCount}.<br>Can do better next time!`;
+            }
 
             const correctList = document.getElementById('correct-answers-list');
-            const wrongList = document.getElementById('wrong-answers-list');
-            correctList.innerHTML = ''; wrongList.innerHTML = '';
+            const wrongListEl = document.getElementById('wrong-answers-list');
+            correctList.innerHTML = ''; wrongListEl.innerHTML = '';
 
             sessionHistory.forEach(entry => {
                 const li = document.createElement('li');
-                li.textContent = `${entry.item} → Normally: ${entry.normally} | Other: ${entry.other}`;
-                (entry.status === "Correct" ? correctList : wrongList).appendChild(li);
+                li.textContent = `${entry.item} → ${entry.normally}`;
+                if (entry.status === "Correct") correctList.appendChild(li);
+                else wrongListEl.appendChild(li);
             });
+
+            const percentage = answered > 0 ? Math.round((score / answered) * 100) : 0;
+            let msg = percentage === 100 ? 'Perfect! You are a true BAFS Master! 🏆' :
+                      percentage >= 80 ? 'Excellent work! Almost there! 💪' :
+                      percentage >= 60 ? 'Good effort! Keep practicing! 🌟' :
+                      'Keep trying! Luck and skill will come! 🍀';
+            document.getElementById('end-message').textContent = msg;
         }
 
         function setupCopy(iconId, listId, feedbackId) {
@@ -345,28 +406,25 @@
             });
         }
 
-        // Navigation
-        document.getElementById('startButton').onclick = () => { 
-            document.getElementById('startPage').style.display = 'none'; 
-            document.getElementById('instruction-modal').style.display = 'flex'; 
+        document.getElementById('startDaruma').onclick = () => {
+            document.getElementById('startPage').style.display = 'none';
+            document.getElementById('instruction-modal').style.display = 'flex';
         };
 
         document.getElementById('continue-button').onclick = () => {
             document.getElementById('instruction-modal').style.display = 'none';
             document.getElementById('gamePage').style.display = 'flex';
-            shuffledItems = [...items]; shuffle(shuffledItems);
-            currentIndex = 0; score = 0; sessionHistory = [];
+            shuffledItems = [...items]; 
+            shuffle(shuffledItems);
+            currentIndex = 0; 
+            score = 0; 
+            sessionHistory = [];
             updateScoreDisplays();
             loadQuestion();
         };
 
         document.getElementById('exitButton').onclick = () => showResultPage();
-
-        // Restart with Red Daruma
-        document.getElementById('restart-daruma').onclick = () => {
-            location.reload();
-        };
-
+        document.getElementById('result-daruma').onclick = () => location.reload();
         setupCopy('copy-correct-icon', 'correct-answers-list', 'copy-correct-feedback');
         setupCopy('copy-wrong-icon', 'wrong-answers-list', 'copy-wrong-feedback');
     </script>
