@@ -18,7 +18,7 @@
             align-items: center;
         }
 
-        /* BAFS Logo - Fixed on Start & Game pages */
+        /* BAFS Logo - Fixed on Start page only */
         .bafs-logo {
             position: fixed;
             left: 20px;
@@ -28,12 +28,12 @@
             z-index: 30;
         }
 
-        /* Result Page - Logo at LEFT-MOST position */
+        /* Result Page - Logo at left-most position */
         .result-page .bafs-logo {
             position: relative;
             left: 0;
             bottom: auto;
-            margin: 40px 0 30px 10px;   /* Very small left margin for true left-most feel */
+            margin: 40px 0 30px 10px;
             display: block;
             text-align: left;
         }
@@ -373,9 +373,6 @@
             <div id="question"></div>
             <div id="round-indicator"></div>
             <div id="cups"></div>
-            <a href="https://www.instagram.com/bafsdojo?igsh=MXhnNW9zN3JjMXJoMg%3D%3D&utm_source=qr" target="_blank">
-                <img class="bafs-logo" src="https://i.postimg.cc/0yMN6650/bafs-dojo.jpg" alt="BAFS DOJO">
-            </a>
         </div>
     </div>
 
@@ -398,7 +395,6 @@
                 <ul id="wrong-answers-list"></ul>
             </div>
         </div>
-        <!-- Logo at LEFT-MOST position on Result Page -->
         <a href="https://www.instagram.com/bafsdojo?igsh=MXhnNW9zN3JjMXJoMg%3D%3D&utm_source=qr" target="_blank">
             <img class="bafs-logo" src="https://i.postimg.cc/0yMN6650/bafs-dojo.jpg" alt="BAFS DOJO">
         </a>
@@ -743,7 +739,9 @@
             sessionHistory = [];
             updateScoreDisplays();
             loadQuestion();
-            bgMusic.volume = 0.6;
+            
+            // Background music volume set to 1/3 (0.2)
+            bgMusic.volume = 0.2;
             bgMusic.play().catch(err => console.log("Background music autoplay prevented:", err));
         };
 
